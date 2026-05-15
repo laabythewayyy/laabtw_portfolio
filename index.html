@@ -1,0 +1,770 @@
+<!doctype html>
+<html lang="en" class="scroll-smooth">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>SannTola</title>
+    <link rel="stylesheet" href="./tailwind/output.css" />
+    <link rel="icon" href="./img_file/laa-icon.png" />
+    <script
+      src="https://kit.fontawesome.com/6ab2824e9d.js"
+      crossorigin="anonymous"
+    ></script>
+  </head>
+  <body class="bg-[#10263a] bg-[url(/img/hero-contour.svg)] text-[#f0f8ff]">
+    <!-- === header === -->
+    <section
+      id="header"
+      class="uppercase p-[20px] w-full sticky z-[1000] top-0"
+    >
+      <nav
+        class="max-w-[1300px] mx-auto bg-[#1f1e1e3d] p-[40px] border-[1px] border-white/40 rounded-[20px] h-[50px] flex justify-between items-center"
+      >
+        <!-- logo bro laa ng hah -->
+        <div>
+          <a href="#">
+            <img
+              src="./img_file/laa-icon.png"
+              alt=""
+              class="inline-block ml-[14px] w-[80px] h-[80px]"
+            />
+          </a>
+        </div>
+
+        <!-- nar-list -->
+        <div class="hidden lg:block">
+          <ul
+            class="flex justify-between gap-[20px] tracking-[2px] text-[27px]"
+          >
+            <li>
+              <a
+                href="#"
+                class="group relative hover:text-[#02abed] transition-color duration-[0.3s] ease"
+                >home
+                <span
+                  class="absolute left-0 bottom-[-4px] w-full h-[2px] bg-[#02abed] transition-transform scale-x-0 group-hover:scale-x-99 duration-[0.3s]"
+                ></span>
+              </a>
+            </li>
+            <li>
+              <a
+                href="#about"
+                class="group relative hover:text-[#02abed] transition-color duration-[0.3s] ease"
+                >about
+                <span
+                  class="absolute left-0 bottom-[-4px] w-full h-[2px] bg-[#02abed] transition-transform scale-x-0 group-hover:scale-x-99 duration-[0.3s]"
+                ></span>
+              </a>
+            </li>
+            <li>
+              <a
+                href="#services"
+                class="group relative hover:text-[#02abed] transition-color duration-[0.3s] ease"
+                >services
+                <span
+                  class="absolute left-0 bottom-[-4px] w-full h-[2px] bg-[#02abed] transition-transform scale-x-0 group-hover:scale-x-99 duration-[0.3s]"
+                ></span>
+              </a>
+            </li>
+            <li>
+              <a
+                href="#project"
+                class="group relative hover:text-[#02abed] transition-color duration-[0.3s] ease"
+                >projects
+                <span
+                  class="absolute left-0 bottom-[-4px] w-full h-[2px] bg-[#02abed] transition-transform scale-x-0 group-hover:scale-x-99 duration-[0.3s]"
+                ></span>
+              </a>
+            </li>
+            <li>
+              <a
+                href="#contact"
+                class="group relative hover:text-[#02abed] transition-color duration-[0.3s] ease"
+                >contact
+                <span
+                  class="absolute left-0 bottom-[-4px] w-full h-[2px] bg-[#02abed] transition-transform scale-x-0 group-hover:scale-x-99 duration-[0.3s]"
+                ></span>
+              </a>
+            </li>
+          </ul>
+        </div>
+
+        <!-- humbuger btn, flex krom 1200px (tablet&mobile) -->
+        <div
+          id="menu-btn"
+          class="flex lg:hidden group relative h-[50px] w-[50px] cursor-pointer items-center justify-center rounded-full border-[2px] border-white/70 z-[101]"
+        >
+          <div
+            class="absolute h-full w-full rounded-full border-[2px] border-white/70 animate-ping opacity-30"
+          ></div>
+          <div
+            class="relative flex h-[15px] w-[25px] flex-col justify-between items-center"
+          >
+            <span
+              class="h-[2px] w-full bg-white/70 transition-all duration-300 ease group-[.active]:translate-y-[6.5px] group-[.active]:opacity-0"
+            ></span>
+            <span
+              class="h-[2px] w-full bg-white/70 transition-all duration-300 ease"
+            ></span>
+            <span
+              class="h-[2px] w-full bg-white/70 transition-all duration-300 ease group-[.active]:-translate-y-[6.5px] group-[.active]:opacity-0"
+            ></span>
+          </div>
+        </div>
+
+        <!-- mobile menu drop down -->
+        <div
+          id="mobile-menu"
+          class="fixed inset-0 bg-[#10263a] flex flex-col items-center justify-center gap-8 text-[2xl] z-[100]"
+        >
+          <ul class="text-center">
+            <li class="p-[20px]">
+              <a
+                href="#"
+                class="mobile-link text-[36px] hover:text-[#02abed] transition-color duration-[0.3s] ease"
+                >home</a
+              >
+            </li>
+            <li class="p-[20px]">
+              <a
+                href="#about"
+                class="mobile-link text-[36px] hover:text-[#02abed] transition-colors transition-color duration-[0.3s] ease"
+                >about</a
+              >
+            </li>
+            <li class="p-[20px]">
+              <a
+                href="#services"
+                class="mobile-link text-[36px] hover:text-[#02abed] transition-color duration-[0.3s] ease"
+                >services</a
+              >
+            </li>
+            <li class="p-[20px]">
+              <a
+                href="#project"
+                class="mobile-link text-[36px] hover:text-[#02abed] transition-color duration-[0.3s] ease"
+                >projects</a
+              >
+            </li>
+            <li class="p-[20px]">
+              <a
+                href="#contact"
+                class="mobile-link text-[36px] hover:text-[#02abed] transition-color duration-[0.3s] ease"
+                >contact</a
+              >
+            </li>
+          </ul>
+        </div>
+      </nav>
+    </section>
+    <!-- end header -->
+    <main>
+      <!-- === hero === -->
+      <section
+        id="hero"
+        class="max-w-[1200px] flex lg:flex-row lg:justify-between lg:items-center lg:self-center lg:mx-auto lg:pt-[150px] lg:pb-[100px] md:mx-[7%] md:flex-row md:items-center md:justify-around md:py-[100px] sm:flex-col sm:py-[50px] sm:flex-col-reverse sm:justify-around sm:items-center sm:mx-[7%]"
+      >
+        <!-- hero intro -->
+        <div class="flex flex-col gap-[18px] ml-[24px]">
+          <div class="">
+            <h1
+              class="w-fit pr-[5px] font-semibold text-transparent italic relative animate-reveal [animation-delay:1s] lg:text-[80px] md:text-[70px] sm:text-[56px]"
+            >
+              Hello,
+              <span
+                class="absolute top-0 left-0 h-[100%] w-0 bg-[#02abed] animate-reveal-box [animation-delay:0.5s]"
+              ></span>
+            </h1>
+            <h1
+              class="w-fit pr-[5px] font-semibold text-[80px] text-transparent italic relative animate-reveal [animation-delay:2s] lg:text-[80px] md:text-[70px] sm:text-[56px]"
+            >
+              My Name is
+              <span
+                class="absolute top-0 left-0 h-[100%] w-0 bg-[#02abed] animate-reveal-box [animation-delay:1.5s]"
+              ></span>
+            </h1>
+            <h1
+              class="w-fit pr-[5px] font-semibold text-[80px] italic text-transparent text-[#02abed] relative animate-reveal-name [animation-delay:3s] lg:text-[70px] md:text-[70px] sm:text-[56px]"
+            >
+              SannTola
+              <span
+                class="absolute top-0 left-0 h-[100%] w-0 bg-[#02abed] animate-reveal-box [animation-delay:2.5s]"
+              ></span>
+            </h1>
+            <a
+              href="#"
+              class="inline-block bg-[#02abed] mt-[10px] py-[8px] px-[20px] rounded-[5px] tracking-[1.5px] lg:text-[24px] md:text-[24px] sm:text-[16px]"
+              >Junior Front-End Dev</a
+            >
+          </div>
+          <div>
+            <ul class="flex">
+              <li
+                class="transition-transform duration-[0.8s] hover:text-[#02abed] hover:rotate-[20deg] hover:scale-[1.1]"
+              >
+                <a
+                  rel="noopener noreferrer"
+                  target="_blank"
+                  href="https://github.com/laabythewayyy"
+                  ><i
+                    class="fa-brands fa-github lg:text-[40px] md:text-[40px] sm:text-[30px]"
+                  ></i
+                ></a>
+              </li>
+              <li
+                class="transition-transform duration-[0.8s] hover:text-[#02abed] hover:rotate-[20deg] hover:scale-[1.1]"
+              >
+                <a
+                  rel="noopener noreferrer"
+                  target="_blank"
+                  href="https://linkedin.com/in/tola-sann-330441340"
+                  ><i
+                    class="fa-brands fa-square-linkedin lg:text-[40px] md:text-[40px] sm:text-[30px]"
+                  ></i
+                ></a>
+              </li>
+              <li
+                class="transition-transform duration-[0.8s] hover:text-[#02abed] hover:rotate-[20deg] hover:scale-[1.1]"
+              >
+                <a
+                  rel="noopener noreferrer"
+                  target="_blank"
+                  href="mailto:suntola204@gmail.com"
+                ></a
+                ><i
+                  class="fa-solid fa-envelope lg:text-[40px] md:text-[40px] sm:text-[30px]"
+                ></i>
+              </li>
+            </ul>
+          </div>
+        </div>
+        <!-- hero photo -->
+        <div class="">
+          <img
+            src="./img_file/avatartola.png"
+            alt="avatar-tola"
+            class="brightness-90 opacity-75 lg:w-[500px] lg:h-[500px] md:w-[450px] md:h-[450px] sm:w-[350px] sm:h-[350px]"
+          />
+        </div>
+      </section>
+      <!-- end hero -->
+      <!-- === about === -->
+      <section
+        id="about"
+        class="reveal opacity-0 translate-y-10 transition-all duration-[1.5s] lg:py-[100px] lg:mx-auto md:py-[100px] md:mx-[7%] sm:mx-[7%] sm:py-[100px]"
+      >
+        <!-- about -->
+        <div
+          class="flex flex-col justify-center items-center lg:p-[20px] md:p-[24px] sm:p-[26px]"
+        >
+          <div class="pt-[20px] pb-[15px]">
+            <h1 class="text-[56px] font-semibold text-center">
+              About <span class="text-[#02abed]">Me</span>
+            </h1>
+            <img
+              src="./img_file/short-hair.jpg"
+              alt="handsome-guy"
+              class="w-[250px] h-[250px] brightness-90 opacity-[55%] object-cover border-2 border-solid border-[#02abed] rounded-[50%] hover:bg-[#1bb7f4] hover:border-[#1bb7f4] hover:opacity-[80%] hover:scale-[1.1] transition-all transition-opacity duration-[1s] transition-transform duration-[1s]"
+            />
+          </div>
+          <div class="pb-[20px] pt-[10px] flex flex-col items-center">
+            <h1 class="text-center text-[34px]">
+              Front-End <span class="text-[#02abed]">Developer</span>
+            </h1>
+            <p
+              class="max-w-[1200px] text-[20px] text-center text-wrap md:mx-[8%]"
+            >
+              I’m a junior web developer who enjoys building clean, responsive,
+              and user-friendly websites. While I have experience with
+              full-stack development, I currently focus mostly on front-end
+              development, where I bring designs to life and create smooth user
+              experiences. I’m passionate about improving my skills, learning
+              new technologies, and building modern web applications.
+            </p>
+            <a
+              target="_blank"
+              href="./img_file/SannTola's Portfolio.pdf"
+              class="inline-block bg-[#02abed] mt-[16px] px-[14px] py-[10px] rounded-[5px] text-center duration-[0.8s] hover:scale-[1.1]"
+              >Read More</a
+            >
+          </div>
+        </div>
+        <!-- skill -->
+        <h1 class="text-[56px] text-center font-semibold p-[20px]">
+          My <span class="text-[#02abed]">Skills</span>
+        </h1>
+        <div
+          class="max-w-[1500px] gap-[24px] mx-auto p-[20px] grid lg:grid-cols-2 md:grid-cols-2 sm:grid-cols-1"
+        >
+          <!-- skill card -->
+          <div
+            class="border-1 border-solid rounded-[10px] border-[#475569] bg-[#33415580] p-[24px] hover:border-[#22d3ee] hover:shadow-[0_0_20px_rgba(34,211,238,0.3)] transition-all duration-300 ease-in-out"
+          >
+            <div class="mb-[16px]">
+              <h1 class="text-[25px] font-semibold">
+                <i class="fa-solid fa-palette text-[#02abed]"></i>
+                <span>Front-End</span>
+              </h1>
+            </div>
+            <div class="flex flex-wrap gap-[8px]">
+              <span
+                class="border-1 border-solid border-[#64748b] rounded-[999px] bg-[#47556980] px-[12px] py-[4px] text-[15px] text-[#67e8f9] hover:border-[#22d3ee] duration-[0.3s]"
+                >React</span
+              >
+              <span
+                class="border-1 border-solid border-[#64748b] rounded-[999px] bg-[#47556980] px-[12px] py-[4px] text-[15px] text-[#67e8f9] hover:border-[#22d3ee] duration-[0.3s]"
+                >Vite</span
+              >
+              <span
+                class="border-1 border-solid border-[#64748b] rounded-[999px] bg-[#47556980] px-[12px] py-[4px] text-[15px] text-[#67e8f9] hover:border-[#22d3ee] duration-[0.3s]"
+                >Tailwind CSS</span
+              >
+              <span
+                class="border-1 border-solid border-[#64748b] rounded-[999px] bg-[#47556980] px-[12px] py-[4px] text-[15px] text-[#67e8f9] hover:border-[#22d3ee] duration-[0.3s]"
+                >Bootstrap</span
+              >
+            </div>
+          </div>
+          <!-- skill card -->
+          <div
+            class="border-1 border-solid rounded-[10px] border-[#475569] bg-[#33415580] p-[24px] hover:border-[#22d3ee] hover:shadow-[0_0_20px_rgba(34,211,238,0.3)] transition-all duration-300 ease-in-out"
+          >
+            <div class="mb-[16px]">
+              <h1 class="text-[25px] font-semibold">
+                <i class="fa-solid fa-database text-[#02abed]"></i>
+                <span>Back-End</span>
+              </h1>
+            </div>
+            <div class="flex flex-wrap gap-[8px]">
+              <span
+                class="border-1 border-solid border-[#64748b] rounded-[999px] bg-[#47556980] px-[12px] py-[4px] text-[15px] text-[#67e8f9] hover:border-[#22d3ee] duration-[0.3s]"
+                >Laravel</span
+              >
+              <span
+                class="border-1 border-solid border-[#64748b] rounded-[999px] bg-[#47556980] px-[12px] py-[4px] text-[15px] text-[#67e8f9] hover:border-[#22d3ee] duration-[0.3s]"
+                >Node.js</span
+              >
+              <span
+                class="border-1 border-solid border-[#64748b] rounded-[999px] bg-[#47556980] px-[12px] py-[4px] text-[15px] text-[#67e8f9] hover:border-[#22d3ee] duration-[0.3s]"
+                >My SQL</span
+              >
+              <span
+                class="border-1 border-solid border-[#64748b] rounded-[999px] bg-[#47556980] px-[12px] py-[4px] text-[15px] text-[#67e8f9] hover:border-[#22d3ee] duration-[0.3s]"
+                >Rest API</span
+              >
+            </div>
+          </div>
+          <!-- skill card -->
+          <div
+            class="border-1 border-solid rounded-[10px] border-[#475569] bg-[#33415580] p-[24px] hover:border-[#22d3ee] hover:shadow-[0_0_20px_rgba(34,211,238,0.3)] transition-all duration-300 ease-in-out"
+          >
+            <div class="mb-[16px]">
+              <h1 class="text-[25px] font-semibold">
+                <i class="fa-solid fa-bolt-lightning text-[#02abed]"></i>
+                <span>Tools - Workflow</span>
+              </h1>
+            </div>
+            <div class="flex flex-wrap gap-[8px]">
+              <span
+                class="border-1 border-solid border-[#64748b] rounded-[999px] bg-[#47556980] px-[12px] py-[4px] text-[15px] text-[#67e8f9] hover:border-[#22d3ee] duration-[0.3s]"
+                >Git</span
+              >
+              <span
+                class="border-1 border-solid border-[#64748b] rounded-[999px] bg-[#47556980] px-[12px] py-[4px] text-[15px] text-[#67e8f9] hover:border-[#22d3ee] duration-[0.3s]"
+                >Github</span
+              >
+              <span
+                class="border-1 border-solid border-[#64748b] rounded-[999px] bg-[#47556980] px-[12px] py-[4px] text-[15px] text-[#67e8f9] hover:border-[#22d3ee] duration-[0.3s]"
+                >Gitlab
+              </span>
+              <span
+                class="border-1 border-solid border-[#64748b] rounded-[999px] bg-[#47556980] px-[12px] py-[4px] text-[15px] text-[#67e8f9] hover:border-[#22d3ee] duration-[0.3s]"
+                >VS Code</span
+              >
+            </div>
+          </div>
+          <!-- skill card -->
+          <div
+            class="border-1 border-solid rounded-[10px] border-[#475569] bg-[#33415580] p-[24px] hover:border-[#22d3ee] hover:shadow-[0_0_20px_rgba(34,211,238,0.3)] transition-all duration-300 ease-in-out"
+          >
+            <div class="mb-[16px]">
+              <h1 class="text-[25px] font-semibold">
+                <i class="fa-solid fa-code text-[#02abed]"></i>
+                <span>Languages</span>
+              </h1>
+            </div>
+            <div class="flex flex-wrap gap-[8px]">
+              <span
+                class="border-1 border-solid border-[#64748b] rounded-[999px] bg-[#47556980] px-[12px] py-[4px] text-[15px] text-[#67e8f9] hover:border-[#22d3ee] duration-[0.3s]"
+                >Javascript</span
+              >
+              <span
+                class="border-1 border-solid border-[#64748b] rounded-[999px] bg-[#47556980] px-[12px] py-[4px] text-[15px] text-[#67e8f9] hover:border-[#22d3ee] duration-[0.3s]"
+                >PHP</span
+              >
+              <span
+                class="border-1 border-solid border-[#64748b] rounded-[999px] bg-[#47556980] px-[12px] py-[4px] text-[15px] text-[#67e8f9] hover:border-[#22d3ee] duration-[0.3s]"
+                >HTML/CSS</span
+              >
+              <span
+                class="border-1 border-solid border-[#64748b] rounded-[999px] bg-[#47556980] px-[12px] py-[4px] text-[15px] text-[#67e8f9] hover:border-[#22d3ee] duration-[0.3s]"
+                >Java</span
+              >
+            </div>
+          </div>
+        </div>
+      </section>
+      <!-- end about -->
+      <!-- === services === -->
+      <section
+        id="services"
+        class="reveal opacity-0 translate-y-10 transition-all duration-1000 lg:my-[80px] md:my-[80px] sm:my-[80px] lg:py-[100px] md:py-[100px] sm:py-[100px] lg:mx-auto md:mx-[7%] sm:mx-[7%] flex flex-col justify-between items-center self-center lg:gap-[24px] md:gap-[24px] sm:-[16px]"
+      >
+        <!-- title -->
+        <div
+          class="text-center p-[20px] lg:mt-[50px] md:mt-[45px] sm:-[mt-[40px]]"
+        >
+          <h1 class="text-[56px] font-semibold">
+            Our <span class="text-[#02abed]">Services</span>
+          </h1>
+        </div>
+        <!-- our services -->
+        <div
+          class="max-w-[1500px] p-[20px] grid justify-items-center gap-[24px] lg:grid-cols-3 md:grid-cols-2 sm:grid-cols-1"
+        >
+          <!-- services page -->
+          <div
+            class="flex flex-col gap-[8px] justify-center items-center max-w-[450px] border-1 border-solid rounded-[10px] border-[#475569] bg-[#33415580] p-[24px] hover:border-[#22d3ee] hover:shadow-[0_0_20px_rgba(34,211,238,0.3)] hover:-translate-y-4 transition-all duration-300 ease-in-outhover:border-[#22d3ee] hover:shadow-[0_0_20px_rgba(34,211,238,0.3)] hover:-translate-y-4 transition-all duration-300 ease-in-out"
+          >
+            <div class="text-center">
+              <i class="fa-solid fa-code text-[#02abed] text-[40px]"></i>
+              <h1 class="text-[30px]">Front End Development</h1>
+            </div>
+            <p class="text-[20px] text-center text-wrap">
+              I create responsive and modern websites using HTML, CSS,
+              JavaScript, and Tailwind CSS. My focus is on building clean,
+              interactive, and user-friendly interfaces that deliver smooth
+              performance, attractive layouts, and a consistent experience
+              across desktop, tablet, and mobile devices.
+            </p>
+            <a
+              href="#contact"
+              class="text-center text-[15px] text-[#67e8f9] inline-block border-1 border-solid border-[#64748b] rounded-[999px] bg-[#47556980] px-[12px] py-[4px] hover:border-[#22d3ee] duration-[0.3s]"
+              >Let's Connect</a
+            >
+          </div>
+          <!-- services page -->
+          <div
+            class="flex flex-col gap-[8px] justify-center items-center max-w-[450px] border-1 border-solid rounded-[10px] border-[#475569] bg-[#33415580] p-[24px] hover:border-[#22d3ee] hover:shadow-[0_0_20px_rgba(34,211,238,0.3)] hover:-translate-y-4 transition-all duration-300 ease-in-out"
+          >
+            <div class="text-center">
+              <i class="fa-brands fa-react text-[#02abed] text-[40px]"></i>
+              <h1 class="text-[30px]">React Development</h1>
+            </div>
+            <p class="text-[20px] text-center text-wrap">
+              I develop dynamic and scalable web applications using React by
+              building reusable components, interactive features, and responsive
+              user interfaces. I focus on writing clean code, improving
+              performance, and creating seamless user experiences for modern
+              websites and applications.
+            </p>
+            <a
+              href="#contact"
+              class="text-center text-[15px] text-[#67e8f9] inline-block border-1 border-solid border-[#64748b] rounded-[999px] bg-[#47556980] px-[12px] py-[4px] hover:border-[#22d3ee] duration-[0.3s]"
+              >Let's Connect</a
+            >
+          </div>
+          <!-- services page -->
+          <div
+            class="md:col-span-2 lg:col-span-1 flex flex-col gap-[8px] justify-center items-center max-w-[450px] border-1 border-solid rounded-[10px] border-[#475569] bg-[#33415580] p-[24px] hover:border-[#22d3ee] hover:shadow-[0_0_20px_rgba(34,211,238,0.3)] hover:-translate-y-4 transition-all duration-300 ease-in-out"
+          >
+            <div class="text-center">
+              <i class="fa-solid fa-paintbrush text-[#02abed] text-[40px]"></i>
+              <h1 class="text-[30px]">Web Design</h1>
+            </div>
+            <p class="text-[20px] text-center text-wrap">
+              I design visually appealing and modern website layouts with a
+              strong focus on user experience, clean structure, and balanced
+              color combinations. My goal is to create engaging designs that are
+              easy to navigate, professional, and aligned with modern web
+              trends.
+            </p>
+            <a
+              href="#contact"
+              class="text-center text-[15px] text-[#67e8f9] inline-block border-1 border-solid border-[#64748b] rounded-[999px] bg-[#47556980] px-[12px] py-[4px] hover:border-[#22d3ee] duration-[0.3s]"
+              >Let's Connect</a
+            >
+          </div>
+        </div>
+      </section>
+      <!-- end services -->
+      <!-- === project === -->
+      <section
+        id="project"
+        class="reveal opacity-0 translate-y-10 transition-all duration-[1.5s] max-w-[1300px] py-[100px] lg:mx-auto md:mx-[7%] sm:my-[7%] flex flex-col justify-center items-center"
+      >
+        <!-- title -->
+        <div class="text-center mt-[20px] p-[20px]">
+          <h1 class="text-[56px] font-semibold">
+            Our <span class="text-[#02abed]">Projects</span>
+          </h1>
+        </div>
+        <!-- projects -->
+        <div
+          class="p-[20px] gap-[16px] grid lg:grid-cols-3 lg:justify-center lg:items-center md:grid-cols-1 md:justify-between md:items-center sm:grid-cols-1 sm:justify-center sm:items-center"
+        >
+          <!-- project card -->
+          <div
+            class="max-w-[450px] flex flex-col gap-[8px] justify-center items-center border-1 border-solid rounded-[10px] border-[#475569] bg-[#33415580] hover:border-[#22d3ee] hover:shadow-[0_0_20px_rgba(34,211,238,0.3)] hover:-translate-y-4 transition-all duration-300 ease-in-out"
+          >
+            <div
+              class="h-64 w-full bg-[url(/img_file/portfolio.jpg)] bg-cover bg-center rounded-t-[10px]"
+            ></div>
+            <div class="p-[24px] flex flex-col justify-center items-center">
+              <h1
+                class="p-[5px] text-[40px] text-center text-[#02abed] font-semibold"
+              >
+                "My Portfolio"
+              </h1>
+              <p class="p-[5px] text-[20px] text-center">
+                Creating responsive, modern, user friendly websites with clean
+                designs, smooth animations, interactive experiences, and
+                creative digital solutions.
+              </p>
+              <a
+                href="#"
+                class="text-center text-[15px] text-[#67e8f9] inline-block border-1 border-solid border-[#64748b] rounded-[999px] bg-[#47556980] px-[12px] py-[4px] hover:border-[#22d3ee] duration-[0.3s]"
+                >Explore!!!</a
+              >
+            </div>
+          </div>
+          <!-- project card -->
+          <div
+            class="max-w-[450px] flex flex-col gap-[8px] justify-center items-center border-1 border-solid rounded-[10px] border-[#475569] bg-[#33415580] hover:border-[#22d3ee] hover:shadow-[0_0_20px_rgba(34,211,238,0.3)] hover:-translate-y-4 transition-all duration-300 ease-in-out"
+          >
+            <div
+              class="h-64 w-full bg-[url(/img_file/barryallen.jpg)] bg-cover bg-top rounded-t-[10px]"
+            ></div>
+            <div class="p-[24px] flex flex-col justify-center items-center">
+              <h1
+                class="p-[5px] text-[40px] text-center text-[#02abed] font-semibold"
+              >
+                "Project Title"
+              </h1>
+              <p class="p-[5px] text-[20px] text-center">
+                Lorem ipsum dolor sit amet consectetur adipisicing elit. Ad iste
+                soluta voluptates quia unde laboriosam veniam error quis ipsam
+                odit.
+              </p>
+              <a
+                href="#"
+                class="text-center text-[15px] text-[#67e8f9] inline-block border-1 border-solid border-[#64748b] rounded-[999px] bg-[#47556980] px-[12px] py-[4px] hover:border-[#22d3ee] duration-[0.3s]"
+                >Explore!!!</a
+              >
+            </div>
+          </div>
+          <!-- project card -->
+          <div
+            class="max-w-[450px] flex flex-col gap-[8px] justify-center items-center border-1 border-solid rounded-[10px] border-[#475569] bg-[#33415580] hover:border-[#22d3ee] hover:shadow-[0_0_20px_rgba(34,211,238,0.3)] hover:-translate-y-4 transition-all duration-300 ease-in-out"
+          >
+            <div
+              class="h-64 w-full bg-[url(/img_file/running.jpg)] bg-cover bg-center rounded-t-[10px]"
+            ></div>
+            <div class="p-[24px] flex flex-col justify-center items-center">
+              <h1
+                class="p-[5px] text-[40px] text-center text-[#02abed] font-semibold"
+              >
+                "Project Title"
+              </h1>
+              <p class="p-[5px] text-[20px] text-center">
+                Lorem ipsum dolor sit amet consectetur adipisicing elit. Ad iste
+                soluta voluptates quia unde laboriosam veniam error quis ipsam
+                odit.
+              </p>
+              <a
+                href="#"
+                class="text-center text-[15px] text-[#67e8f9] inline-block border-1 border-solid border-[#64748b] rounded-[999px] bg-[#47556980] px-[12px] py-[4px] hover:border-[#22d3ee] duration-[0.3s]"
+                >Explore!!!</a
+              >
+            </div>
+          </div>
+        </div>
+      </section>
+      <!-- end project -->
+      <!-- === contact === -->
+      <section
+        id="contact"
+        class="reveal opacity-0 translate-y-10 transition-all duration-[1.5s] pt-[100px] pb-[85px] lg:mx-auto md:mx-[7%] sm:mx-[2%] flex flex-col justify-center items-center self-center"
+      >
+        <!-- my contact -->
+        <div class="text-center p-[20px]">
+          <h1 class="text-[56px] font-semibold">
+            My <span class="text-[#02abed]">Contacts</span>
+          </h1>
+          <p class="text-[20px]">
+            Let’s connect. Feel free to reach out or follow me on my platforms
+            below.
+          </p>
+        </div>
+        <!-- platforms account -->
+        <div
+          class="lg:p-[20px] md:p-[20px] sm:p-[3px] grid min-[440px]:grid-cols-2 lg:grid-cols-3 md:grid-cols-3 lg:gap-[2.5rem] md:gap-[1.5rem] sm:gap-[1rem]"
+        >
+          <!-- platforms -->
+          <!-- email -->
+          <div
+            class="w-[200px] flex flex-col justify-between items-center gap-[8px] border-1 border-solid rounded-[10px] border-[#475569] bg-[#33415580] p-[24px] hover:border-[#22d3ee] hover:shadow-[0_0_20px_rgba(34,211,238,0.3)] transition-all duration-300 ease-in-out"
+          >
+            <i class="fa-solid fa-envelope text-[50px]"></i>
+            <h1 class="text-[30px]">Email</h1>
+            <a
+              rel="noopener noreferrer"
+              target="_blank"
+              href="mailto:suntola204@gmail.com"
+              class="text-[20px]"
+              >Tola Sann</a
+            >
+          </div>
+          <!-- whatsapp -->
+          <div
+            class="w-[200px] flex flex-col justify-between items-center gap-[8px] border-1 border-solid rounded-[10px] border-[#475569] bg-[#33415580] p-[24px] hover:border-[#22d3ee] hover:shadow-[0_0_20px_rgba(34,211,238,0.3)] transition-all duration-300 ease-in-out"
+          >
+            <i class="fa-brands fa-whatsapp text-[50px]"></i>
+            <h1 class="text-[30px]">WhatsApp</h1>
+            <a
+              rel="noopener noreferrer"
+              target="_blank"
+              href="https://wa.me/855963527860"
+              class="text-[20px]"
+              >Sann Tola</a
+            >
+          </div>
+          <!-- telegram -->
+          <div
+            class="w-[200px] flex flex-col justify-between items-center gap-[8px] border-1 border-solid rounded-[10px] border-[#475569] bg-[#33415580] p-[24px] hover:border-[#22d3ee] hover:shadow-[0_0_20px_rgba(34,211,238,0.3)] transition-all duration-300 ease-in-out"
+          >
+            <i class="fa-brands fa-telegram text-[50px]"></i>
+            <h1 class="text-[30px]">Telegram</h1>
+            <a
+              rel="noopener noreferrer"
+              target="_blank"
+              href="https://t.me/lalacocacolastic"
+              class="text-[20px]"
+              >Sann Tola</a
+            >
+          </div>
+          <!-- ig -->
+          <div
+            class="w-[200px] flex flex-col justify-between items-center gap-[8px] border-1 border-solid rounded-[10px] border-[#475569] bg-[#33415580] p-[24px] hover:border-[#22d3ee] hover:shadow-[0_0_20px_rgba(34,211,238,0.3)] transition-all duration-300 ease-in-out"
+          >
+            <i class="fa-brands fa-instagram text-[50px]"></i>
+            <h1 class="text-[30px]">Instagram</h1>
+            <a
+              rel="noopener noreferrer"
+              target="_blank"
+              href="https://instagram.com/_imbarryallen"
+              class="text-[20px]"
+              >@_imbarryallen</a
+            >
+          </div>
+          <!-- fb -->
+          <div
+            class="w-[200px] flex flex-col justify-between items-center gap-[8px] border-1 border-solid rounded-[10px] border-[#475569] bg-[#33415580] p-[24px] hover:border-[#22d3ee] hover:shadow-[0_0_20px_rgba(34,211,238,0.3)] transition-all duration-300 ease-in-out"
+          >
+            <i class="fa-brands fa-facebook text-[50px]"></i>
+            <h1 class="text-[30px]">Facebook</h1>
+            <a
+              rel="noopener noreferrer"
+              target="_blank"
+              href="https://facebook.com/laabytheway.yahoo"
+              class="text-[20px]"
+              >Tola Sann</a
+            >
+          </div>
+          <!-- tiktok -->
+          <div
+            class="w-[200px] flex flex-col justify-between items-center gap-[8px] border-1 border-solid rounded-[10px] border-[#475569] bg-[#33415580] p-[24px] hover:border-[#22d3ee] hover:shadow-[0_0_20px_rgba(34,211,238,0.3)] transition-all duration-300 ease-in-out"
+          >
+            <i class="fa-brands fa-tiktok text-[50px]"></i>
+            <h1 class="text-[30px]">Tiktok</h1>
+            <a
+              rel="noopener noreferrer"
+              target="_blank"
+              href="https://tiktok.com/@laabythewayyy"
+              class="text-[20px]"
+              >@laabytheway</a
+            >
+          </div>
+        </div>
+      </section>
+      <!-- end contact -->
+    </main>
+    <!-- === footer === -->
+    <footer
+      id="footer"
+      class="bg-[#10263a] lg:px-[200px] md:px-[5%] sm:px-[50px] mx-auto flex lg:flex-row-reverse md:flex-row-reverse sm:flex-col lg:justify-between md:justify-around sm:justify-center items-center border-t-2 border-t-solid border-t-[#475569]"
+    >
+      <!-- get in touch -->
+      <div
+        class="flex flex-col gap-[8px] pt-[20px] lg:text-start md:text-start sm:text-center"
+      >
+        <div>
+          <h1 class="text-[33px] text-[#02abed] font-semibold">Get in touch</h1>
+          <p class="lg:text-[20px] md:text-[20px] sm:text-[16px] text-wrap">
+            Feel free to reach out, and connect with me on the platforms below.
+          </p>
+        </div>
+        <div
+          class="flex lg:justify-start md:justify-start sm:justify-center gap-[14px] py-[10px]"
+        >
+          <span
+            class="transition-transform duration-[0.8s] hover:text-[#02abed] hover:rotate-[20deg] hover:scale-[1.2]"
+            ><a
+              rel="noopener noreferrer"
+              target="_blank"
+              href="https://instagram.com/_imbarryallen"
+              class="inline-block"
+              ><i class="fa-brands fa-instagram text-[25px]"></i></a
+          ></span>
+          <span
+            class="transition-transform duration-[0.8s] hover:text-[#02abed] hover:rotate-[20deg] hover:scale-[1.2]"
+            ><a
+              rel="noopener noreferrer"
+              target="_blank"
+              href="https://facebook.com/laabytheway.yahoo"
+              class="inline-block"
+              ><i class="fa-brands fa-facebook text-[25px]"></i></a
+          ></span>
+          <span
+            class="transition-transform duration-[0.8s] hover:text-[#02abed] hover:rotate-[20deg] hover:scale-[1.2]"
+            ><a
+              rel="noopener noreferrer"
+              target="_blank"
+              href="https://tiktok.com/@laabythewayyy"
+              class="inline-block"
+              ><i class="fa-brands fa-tiktok text-[25px]"></i></a
+          ></span>
+          <span
+            class="transition-transform duration-[0.8s] hover:text-[#02abed] hover:rotate-[20deg] hover:scale-[1.2]"
+            ><a
+              rel="noopener noreferrer"
+              target="_blank"
+              href="https://youtube.com/@laabythewayyyy"
+              class="inline-block"
+              ><i class="fa-brands fa-youtube text-[25px]"></i></a
+          ></span>
+        </div>
+      </div>
+      <!-- copy right -->
+      <div class="text-center">
+        <h1 class="text-[30px] text-[#02abed] font-semibold">
+          Tola Sann, Web Dev
+        </h1>
+        <p class="text-[16px]">© 2026 Laa Bytheway | All rights reserved.</p>
+      </div>
+    </footer>
+    <!-- end footer -->
+    <script src="script.js"></script>
+  </body>
+</html>
+<!-- LAA BYTHEWAY -->

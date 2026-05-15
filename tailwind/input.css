@@ -1,0 +1,51 @@
+@import url("https://fonts.googleapis.com/css2?family=Smooch+Sans:wght@100..900&display=swap");
+@import "tailwindcss";
+@theme {
+  /* font for the whole web */
+  --font-sans: "Smooch Sans", sans-serif;
+  /* add these lines to create the utility classes */
+  --animate-reveal-box: text_reveal_box 1s ease 0.3s forwards;
+  --animate-reveal: text_reveal 1s ease forwards;
+  --animate-reveal-name: text_reveal_name 1s ease forwards;
+  /* media query */
+  --breakpoint-sm: 250px; /* mobile min-w */
+  --breakpoint-md: 800px; /*  tablet min-width */
+  --breakpoint-lg: 1200px; /*  desktop min-width */
+
+  /* define the keyframes */
+  @keyframes text_reveal_box {
+    50% {
+      width: 100%;
+      left: 0;
+    }
+    100% {
+      width: 0;
+      left: 100%;
+    }
+  }
+
+  @keyframes text_reveal {
+    100% {
+      color: white;
+    }
+  }
+  @keyframes text_reveal_name {
+    100% {
+      color: #02abed;
+    }
+  }
+}
+/* animation reveal */
+.reveal.active {
+  opacity: 1;
+  transform: translateY(0);
+}
+/* ah ng transform bos menu bar */
+#mobile-menu {
+  transform: translateX(100%);
+  transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+#mobile-menu.open {
+  transform: translateX(0);
+}
