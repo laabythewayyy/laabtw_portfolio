@@ -461,9 +461,6 @@
       background-color: color-mix(in oklab, var(--color-white) 70%, transparent);
     }
   }
-  .bg-\[url\(\/img_file\/barryallen\.jpg\)\] {
-    background-image: url(/img_file/barryallen.jpg);
-  }
   .bg-\[url\(\/img_file\/hero-contour\.svg\)\] {
     background-image: url(/img_file/hero-contour.svg);
   }
