@@ -5,6 +5,7 @@ import HeroArt from '@/components/site/HeroArt';
 import SectionHead from '@/components/site/SectionHead';
 import PhoneMenu from '@/components/site/PhoneMenu';
 import Cursor from '@/components/site/Cursor';
+import Lightning from '@/components/site/Lightning';
 
 export async function generateMetadata() {
   const { settings } = await getSiteContent();
@@ -33,6 +34,7 @@ export default async function Home() {
       </Portfolio>
       <PhoneMenu />
       <Cursor />
+      <Lightning />
     </>
   );
 }
