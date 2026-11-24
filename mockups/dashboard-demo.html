@@ -1,0 +1,440 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Dashboard demo · easier editing</title>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Semi+Condensed:wght@600;700&family=Barlow:wght@400;500;600&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
+<script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.2/Sortable.min.js">// drop zones: click or drag a file in; shows a preview straight away
+document.addEventListener('change', e=>{ const d=e.target.closest('[data-drop]'); if (!d || !e.target.files?.[0]) return; showFile(d, e.target.files[0]); });
+function showFile(d, f){ if (f.type.startsWith('image/')) { const url=URL.createObjectURL(f); let img=d.querySelector('img');
+    if (!img) { d.querySelector('.dicon')?.remove(); img=document.createElement('img'); d.prepend(img); } img.style.display=''; img.src=url; }
+  else d.querySelector('b').textContent=f.name;
+  if (d.closest('#site')) dirty(); }
+document.addEventListener('dragover', e=>{ const d=e.target.closest('[data-drop]'); if (d) { e.preventDefault(); d.classList.add('over'); } });
+document.addEventListener('dragleave', e=>{ e.target.closest('[data-drop]')?.classList.remove('over'); });
+document.addEventListener('drop', e=>{ const d=e.target.closest('[data-drop]'); if (!d) return; e.preventDefault(); d.classList.remove('over'); const f=e.dataTransfer.files?.[0]; if (f) showFile(d,f); });
+</script>
+<style>
+  :root{--black:#000;--carbon:#141414;--line:#2b2b2b;--red:#d0101f;--red-hot:#ff2436;--gold:#ffb300;--white:#fff;--grey:#a3a3a3}
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:"Barlow",sans-serif;color:var(--white);background:radial-gradient(ellipse 60% 70% at 75% 50%,rgba(120,8,18,.35),transparent 70%) fixed,url(contour-red.svg) center/cover fixed,#000;min-height:100vh}
+  h1,h2,h3{font-family:"Barlow Semi Condensed",sans-serif;line-height:1.1}
+  button{font-family:inherit;cursor:pointer}
+  :focus-visible{outline:2px solid var(--gold);outline-offset:2px}
+  .adm{display:grid;grid-template-columns:230px 1fr;min-height:100vh;background:rgba(0,0,0,.82)}
+  .side{border-right:1px solid var(--line);padding:26px 18px;background:#060606;display:flex;flex-direction:column;gap:4px}
+  .brand{font:700 24px "Barlow Semi Condensed";letter-spacing:.04em;margin:0 10px 22px}.brand span{color:var(--red-hot)}
+  .side a{padding:10px 12px;color:var(--grey);font-weight:600;text-decoration:none;border-left:2px solid transparent;cursor:pointer}
+  .side a:hover{color:var(--gold)}.side a.on{color:#fff;border-left-color:var(--red-hot)}
+  main{padding:34px clamp(18px,4vw,48px);max-width:980px}
+  .head{display:flex;justify-content:space-between;align-items:center;gap:16px;margin-bottom:22px;flex-wrap:wrap}
+  .head h1{font-size:40px}.sub{color:var(--grey);margin-top:4px}
+  .btn{border:0;padding:12px 22px;font-weight:600;font-size:15px;transition:background .2s,border-color .2s,color .2s}
+  .btn-sm{padding:9px 14px;font-size:14px}
+  .btn-red{background:var(--red);color:#fff}.btn-red:hover{background:var(--red-hot)}
+  .btn-line{background:transparent;border:1px solid var(--line);color:#fff}.btn-line:hover{border-color:var(--gold);color:var(--gold)}
+  .page{display:none}.page.on{display:block;animation:fade .25s ease}
+  @keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+  .note{background:rgba(255,179,0,.08);border:1px solid rgba(255,179,0,.4);color:#ffd77a;padding:10px 14px;font-size:14px;margin-bottom:18px}
+
+  /* ---- list rows: drag handle, thumb, title, visibility, edit ---- */
+  .group-title{font:700 20px "Barlow Semi Condensed";margin:26px 0 10px}
+  .rows{border-top:1px solid var(--line)}
+  .item{border-bottom:1px solid var(--line);background:rgba(10,10,10,.6)}
+  .row{display:grid;grid-template-columns:34px 46px 1fr auto auto;align-items:center;gap:14px;padding:12px 8px}
+  .handle{width:34px;height:38px;display:grid;place-items:center;color:#666;font-size:16px;cursor:grab;border-radius:4px;touch-action:none}
+  .handle:hover{color:var(--gold);background:rgba(255,179,0,.08)}
+  .thumb{width:46px;height:38px;display:grid;place-items:center;background:#111;border:1px solid var(--line);color:var(--red-hot);font-size:17px}
+  .title{font-weight:600}.meta{color:var(--grey);font-size:13px}
+  .mini-bar{height:5px;background:#222;margin-top:6px;max-width:220px}.mini-bar i{display:block;height:100%;background:linear-gradient(90deg,#8a0a15,var(--red) 60%,var(--red-hot));transition:width .25s ease}
+  .toggle{display:flex;align-items:center;gap:8px;color:var(--grey);font-size:13px;background:none;border:0}
+  .toggle i{width:38px;height:20px;border-radius:20px;border:1px solid var(--line);position:relative;background:#111;transition:background .2s}
+  .toggle i::after{content:"";position:absolute;top:2px;left:2px;width:14px;height:14px;border-radius:50%;background:var(--grey);transition:transform .2s,background .2s}
+  .toggle.on i{background:rgba(208,16,31,.35);border-color:var(--red)}.toggle.on i::after{transform:translateX(18px);background:var(--red-hot)}
+  .item.hidden .title,.item.hidden .meta,.item.hidden .thumb{opacity:.4}
+  .edit{background:none;border:1px solid var(--line);color:#fff;padding:7px 14px;font-weight:600}
+  .edit:hover,.item.open .edit{border-color:var(--gold);color:var(--gold)}
+  /* dragging */
+  .sortable-ghost{opacity:.25}
+  .sortable-chosen .row{background:rgba(255,179,0,.06)}
+  .sortable-drag{box-shadow:0 12px 30px rgba(0,0,0,.6),0 0 0 1px var(--gold)}
+  .drag-hint{color:var(--grey);font-size:13px;margin:-8px 0 12px}
+
+  /* ---- inline editor: opens under the row ---- */
+  .editor{display:grid;grid-template-rows:0fr;transition:grid-template-rows .3s ease}
+  .item.open .editor{grid-template-rows:1fr}
+  .editor > div{overflow:hidden}
+  .editor-inner{padding:6px 8px 22px 56px;display:grid;gap:16px}
+  .f{display:grid;gap:8px;font-weight:600;font-size:14px;color:#ddd}
+  .f > span:first-child{display:flex;align-items:baseline;gap:6px;flex-wrap:wrap}
+  .hint{font-weight:400}
+  .f input[type=text],.f textarea{width:100%;background:#0e0e0e;border:1px solid var(--line);color:#fff;padding:12px;font:400 16px "Barlow";transition:border-color .2s,box-shadow .2s}
+  .f textarea{min-height:90px;resize:vertical}
+  .f input:focus,.f textarea:focus{outline:none;border-color:var(--gold);box-shadow:0 0 0 2px rgba(255,179,0,.25)}
+  .hint{color:var(--grey);font-size:13px;font-weight:400}
+  .actions{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+  .actions .del{margin-left:auto;background:none;border:1px solid #f26d6d;color:#f26d6d;padding:10px 16px;font-weight:600}
+  .saved{color:#33d17a;font-size:14px;font-weight:600;opacity:0;transition:opacity .3s}.saved.on{opacity:1}
+
+  /* slider */
+  .slider-row{display:flex;align-items:center;gap:14px}
+  input[type=range]{flex:1;accent-color:var(--red-hot);height:28px}
+  .pct{min-width:54px;text-align:right;font:700 22px "Barlow Semi Condensed";color:var(--red-hot)}
+
+  /* segmented choice buttons */
+  .seg{display:flex;flex-wrap:wrap;gap:8px}
+  .seg button{background:#0e0e0e;border:1px solid var(--line);color:var(--grey);padding:10px 16px;font-weight:600;font-size:15px;transition:all .2s}
+  .seg button:hover{border-color:var(--gold);color:var(--gold)}
+  .seg button.on{border-color:var(--red-hot);color:#fff;background:rgba(208,16,31,.25)}
+
+  /* icon picker */
+  .picker{border:1px solid var(--line);background:#0b0b0b}
+  .picker input{width:100%;background:#0e0e0e;border:0;border-bottom:1px solid var(--line);color:#fff;padding:12px;font:400 16px "Barlow"}
+  .picker input:focus{outline:none;border-bottom-color:var(--gold)}
+  .icons{display:grid;grid-template-columns:repeat(auto-fill,minmax(64px,1fr));gap:6px;padding:10px;max-height:190px;overflow:auto}
+  .icons button{display:grid;gap:4px;place-items:center;background:none;border:1px solid transparent;color:#ddd;padding:8px 4px;font-size:20px}
+  .icons button span{font-size:11px;color:var(--grey)}
+  .icons button:hover{border-color:var(--gold);color:var(--gold)}
+  .icons button.on{border-color:var(--red-hot);color:var(--red-hot);background:rgba(208,16,31,.15)}
+
+  /* site text: tabs, cards, live preview, drop zones, unsaved bar */
+  .tabs{display:flex;gap:6px;border-bottom:1px solid var(--line);margin-bottom:20px;flex-wrap:wrap}
+  .tabs button{background:none;border:0;border-bottom:2px solid transparent;color:var(--grey);padding:10px 14px;font-weight:600;font-size:15px}
+  .tabs button:hover{color:var(--gold)}.tabs button.on{color:#fff;border-bottom-color:var(--red-hot)}
+  .tab{display:none}.tab.on{display:grid;gap:18px;animation:fade .25s ease}
+  .card{border:1px solid var(--line);background:rgba(20,20,20,.6);padding:22px;display:grid;gap:16px}
+  .card h2{font-size:22px}
+  .two{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+  .preview{border:1px dashed var(--line);padding:16px 18px;background:#050505}
+  .preview small{display:block;color:var(--grey);font-size:12px;margin-bottom:8px;letter-spacing:.08em;text-transform:uppercase}
+  .preview .pname{font:700 40px "Barlow Semi Condensed"}
+  .preview .plead{color:var(--grey);margin-top:6px;line-height:1.5}.preview .plead strong{color:#fff}
+  .drop{border:2px dashed var(--line);padding:18px;display:flex;align-items:center;gap:16px;cursor:pointer;transition:border-color .2s,background .2s}
+  .drop:hover,.drop.over{border-color:var(--gold);background:rgba(255,179,0,.05)}
+  .drop img{width:84px;height:84px;object-fit:cover;border:1px solid var(--line)}
+  .drop .dicon{width:84px;height:84px;display:grid;place-items:center;background:#111;color:var(--grey);font-size:26px;border:1px solid var(--line)}
+  .drop b{display:block;margin-bottom:4px}.drop input{display:none}
+  .switch-row{display:flex;align-items:center;justify-content:space-between;gap:12px}
+  .fact{display:grid;grid-template-columns:34px 1fr 1.5fr 34px;gap:8px;align-items:center}
+  .fact input{width:100%;background:#0e0e0e;border:1px solid var(--line);color:#fff;padding:11px;font:400 15px "Barlow"}
+  .fact input:focus{outline:none;border-color:var(--gold)}
+  .xbtn{width:34px;height:38px;background:none;border:1px solid var(--line);color:var(--grey)}.xbtn:hover{border-color:#f26d6d;color:#f26d6d}
+  .unsaved{position:sticky;bottom:0;margin-top:20px;display:flex;align-items:center;justify-content:space-between;gap:12px;padding:14px 18px;
+    background:#0f0f0f;border:1px solid var(--gold);box-shadow:0 -6px 24px rgba(0,0,0,.6);transform:translateY(20px);opacity:0;pointer-events:none;transition:all .25s}
+  .unsaved.on{transform:none;opacity:1;pointer-events:auto}
+  .chips{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+  .chip{display:inline-flex;align-items:center;gap:8px;border:1px solid var(--line);padding:7px 12px;font-weight:600}
+  .chip button{background:none;border:0;color:var(--grey)}.chip button:hover{color:#f26d6d}
+  .chip-add{display:flex;gap:6px}.chip-add input{background:#0e0e0e;border:1px solid var(--line);color:#fff;padding:8px 10px;font:400 14px "Barlow"}
+  .shot-thumb{width:46px;height:38px;object-fit:cover}
+  .toast{position:fixed;bottom:22px;left:50%;transform:translate(-50%,20px);opacity:0;background:#0f0f0f;border:1px solid var(--gold);padding:12px 20px;font-weight:600;box-shadow:0 0 16px rgba(255,179,0,.3);transition:all .25s;pointer-events:none}
+  .toast.on{opacity:1;transform:translate(-50%,0)}
+  .demo-badge{position:fixed;right:16px;top:14px;background:#fff;color:#000;font-weight:600;font-size:13px;padding:8px 14px;border-radius:30px}
+  @media (max-width:820px){
+    .adm{grid-template-columns:1fr}
+    .side{flex-direction:row;flex-wrap:nowrap;overflow-x:auto;align-items:center;gap:2px;padding:12px 14px;position:sticky;top:0;z-index:5;scrollbar-width:none}
+    .side::-webkit-scrollbar{display:none}
+    .brand{margin:0 12px 0 4px;font-size:20px;white-space:nowrap}
+    .side a{white-space:nowrap;border-left:0;border-bottom:2px solid transparent;padding:8px 10px}
+    .side a.on{border-bottom-color:var(--red-hot)}
+    .tabs{flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none}.tabs::-webkit-scrollbar{display:none}
+    .tabs button{white-space:nowrap}
+    main{padding:22px 16px}
+    .head h1{font-size:32px}
+    .row{grid-template-columns:30px 1fr auto auto;gap:10px;padding:12px 4px}
+    .thumb,.toggle span{display:none}
+    .editor-inner{padding:6px 4px 20px}
+    .two{grid-template-columns:1fr}
+    .fact{grid-template-columns:30px 1fr 34px;grid-template-areas:"h l x" "h v v";row-gap:6px;padding-bottom:6px;border-bottom:1px solid var(--line)}
+    .fact .handle{grid-area:h;align-self:start}.fact input:nth-of-type(1){grid-area:l}.fact input:nth-of-type(2){grid-area:v}.fact .xbtn{grid-area:x}
+    .actions .del{margin-left:0}
+    .unsaved{flex-direction:column;align-items:stretch}
+    .demo-badge{display:none}
+  }
+</style>
+</head>
+<body>
+<div class="adm">
+  <nav class="side">
+    <div class="brand">TOLA <span>SANN</span></div>
+    <a data-p="site">Site text</a>
+    <a data-p="skills" class="on">Skills</a>
+    <a data-p="resume">Resume</a>
+    <a data-p="build">What I build</a>
+    <a data-p="projects">Projects</a>
+    <a data-p="contacts">Contacts</a>
+  </nav>
+  <main>
+    <div class="note"><b>Demo only.</b> Try dragging the ⠿ handles, clicking <b>Edit</b>, the slider, the big choice buttons and the icon picker. Nothing here is saved.</div>
+
+    <!-- ===== SKILLS ===== -->
+    <section class="page on" id="skills">
+      <div class="head"><div><h1>Skills</h1><p class="sub">The bars in About.</p></div><button class="btn btn-red" data-add="skills">Add skill</button></div>
+      <p class="drag-hint"><i class="fa-solid fa-grip-vertical"></i> Drag a row to change the order on your site.</p>
+      <div class="rows" data-list="skills"></div>
+    </section>
+
+    <!-- ===== RESUME ===== -->
+    <section class="page" id="resume">
+      <div class="head"><div><h1>Resume</h1><p class="sub">Education and work on the left, achievements on the right.</p></div><button class="btn btn-red" data-add="resume">Add entry</button></div>
+      <p class="drag-hint"><i class="fa-solid fa-grip-vertical"></i> Drag within a group to reorder.</p>
+      <h3 class="group-title">Education</h3><div class="rows" data-list="resume" data-group="education"></div>
+      <h3 class="group-title">Work experience</h3><div class="rows" data-list="resume" data-group="work"></div>
+      <h3 class="group-title">Achievements</h3><div class="rows" data-list="resume" data-group="achievement"></div>
+    </section>
+
+    <!-- ===== SITE TEXT ===== -->
+    <section class="page" id="site">
+      <div class="head"><div><h1>Site text</h1><p class="sub">Your name, description, avatar, About text, headings and CV.</p></div></div>
+      <div class="tabs" role="tablist">
+        <button class="on" data-tab="t-home">Home</button><button data-tab="t-about">About</button>
+        <button data-tab="t-heads">Headings</button><button data-tab="t-files">Avatar &amp; CV</button><button data-tab="t-footer">Footer</button>
+      </div>
+
+      <div class="tab on" id="t-home">
+        <div class="preview"><small>Live preview</small>
+          <div class="pname"><span id="pv-first">Tola</span> <span id="pv-last" style="color:var(--red-hot)">Sann</span></div>
+          <p class="plead" id="pv-lead"></p></div>
+        <div class="card"><div class="two">
+          <label class="f">First name<input type="text" data-live="first" value="Tola"></label>
+          <label class="f"><span>Last name <span class="hint">(shown in red)</span></span><input type="text" data-live="last" value="Sann"></label></div>
+          <label class="f">Short description<textarea data-live="lead">I'm a **junior front-end developer** from Cambodia, building fast, clean and responsive websites.</textarea>
+            <span class="hint">Put **double stars** around words to make them bold. The preview above updates as you type.</span></label>
+          <div class="switch-row"><div><b>"Open to work" badge</b><div class="hint">Shows under your avatar on the homepage.</div></div>
+            <button class="toggle on" data-plain-toggle><i></i><span>On</span></button></div>
+        </div>
+      </div>
+
+      <div class="tab" id="t-about">
+        <div class="card">
+          <label class="f">Title<input type="text" value="Front-end developer"></label>
+          <label class="f">Paragraph<textarea>I'm a junior web developer who enjoys building clean, responsive and user-friendly websites.</textarea></label>
+          <div class="f"><span>Info list <span class="hint">Drag the handle to reorder.</span></span>
+            <div id="facts" style="display:grid;gap:8px"></div>
+            <button type="button" class="btn btn-line btn-sm" style="justify-self:start;margin-top:4px" data-add-fact><i class="fa-solid fa-plus"></i> Add line</button></div>
+          <label class="f"><span>Second paragraph <span class="hint">(optional)</span></span><textarea>I'm always improving my skills, learning new technologies, and building modern web applications.</textarea></label>
+        </div>
+      </div>
+
+      <div class="tab" id="t-heads">
+        <div class="card"><h2>Section headings</h2>
+          <div class="two"><label class="f">About: small label<input type="text" value="About"></label><label class="f">About: big heading<input type="text" value="Learn more about me"></label></div>
+          <div class="two"><label class="f">Resume: small label<input type="text" value="Resume"></label><label class="f">Resume: big heading<input type="text" value="Check my resume"></label></div>
+          <div class="two"><label class="f">Projects: small label<input type="text" value="Projects"></label><label class="f">Projects: big heading<input type="text" value="My work"></label></div>
+          <div class="two"><label class="f">Contact: small label<input type="text" value="Contact"></label><label class="f">Contact: big heading<input type="text" value="Let's work together"></label></div>
+        </div>
+        <div class="card"><h2>Smaller titles</h2><div class="two">
+          <label class="f">In About<input type="text" value="Skills"></label><label class="f">In Projects (top)<input type="text" value="What I can build for you"></label>
+          <label class="f">In Projects (cards)<input type="text" value="Things I've built"></label><label class="f">In Contact<input type="text" value="Social media"></label></div></div>
+      </div>
+
+      <div class="tab" id="t-files">
+        <div class="card"><h2>Avatar</h2>
+          <label class="drop" data-drop><img src="../public/avatartola.png" alt="" onerror="this.style.display='none'"><input type="file" accept="image/*">
+            <div><b>Drop a new image here, or click to choose</b><span class="hint">JPG, PNG or WebP up to 5 MB. A transparent background looks best.</span></div></label></div>
+        <div class="card"><h2>CV</h2>
+          <label class="drop" data-drop><span class="dicon"><i class="fa-regular fa-file-pdf"></i></span><input type="file" accept="application/pdf">
+            <div><b>portfolio-tola.pdf</b><span class="hint">Drop a new PDF here, or click to choose. Up to 5 MB.</span></div></label></div>
+      </div>
+
+      <div class="tab" id="t-footer">
+        <div class="card">
+          <label class="f">"Need something else?" line (Projects)<textarea>Need something else, like a web app or a dashboard? Tell me what you have in mind.</textarea></label>
+          <label class="f">Copyright line<input type="text" value="© 2026 Laa Bytheway. All rights reserved."></label>
+          <label class="f">Browser tab title<input type="text" value="Tola Sann · Front-end developer"></label>
+        </div>
+      </div>
+
+      <div class="unsaved" id="unsaved"><span><b>You have unsaved changes.</b> <span class="hint">Nothing is saved until you click Save.</span></span>
+        <span class="actions"><button class="btn btn-line" data-discard>Discard</button><button class="btn btn-red" data-save-site>Save changes</button></span></div>
+    </section>
+
+    <!-- ===== WHAT I BUILD ===== -->
+    <section class="page" id="build">
+      <div class="head"><div><h1>What I build</h1><p class="sub">The website types under "What I can build for you".</p></div><button class="btn btn-red" data-add="build">Add item</button></div>
+      <p class="drag-hint"><i class="fa-solid fa-grip-vertical"></i> Drag a row to change the order on your site.</p>
+      <div class="rows" data-list="build"></div>
+    </section>
+
+    <!-- ===== PROJECTS ===== -->
+    <section class="page" id="projects">
+      <div class="head"><div><h1>Projects</h1><p class="sub">The cards under "Things I've built".</p></div><button class="btn btn-red" data-add="projects">Add project</button></div>
+      <p class="drag-hint"><i class="fa-solid fa-grip-vertical"></i> Drag a row to change the order on your site.</p>
+      <div class="rows" data-list="projects"></div>
+      <div class="card" style="margin-top:34px"><h2>Categories</h2><p class="hint">These become the filter buttons. Removing one keeps its projects.</p>
+        <div class="chips" id="cats"></div></div>
+    </section>
+
+    <!-- ===== CONTACTS ===== -->
+    <section class="page" id="contacts">
+      <div class="head"><div><h1>Contacts</h1><p class="sub">Contact boxes, social media cards and homepage icons.</p></div><button class="btn btn-red" data-add="contacts">Add link</button></div>
+      <p class="drag-hint"><i class="fa-solid fa-grip-vertical"></i> Drag a row to change the order on your site.</p>
+      <div class="rows" data-list="contacts"></div>
+    </section>
+  </main>
+</div>
+<div class="toast" id="toast">Changes saved. Your site is updated.</div>
+<span class="demo-badge">Dashboard demo</span>
+
+<script>
+const ICONS = [
+  ['fa-brands fa-github','GitHub'],['fa-brands fa-linkedin-in','LinkedIn'],['fa-brands fa-instagram','Instagram'],['fa-brands fa-facebook-f','Facebook'],
+  ['fa-brands fa-tiktok','TikTok'],['fa-brands fa-youtube','YouTube'],['fa-brands fa-telegram','Telegram'],['fa-brands fa-whatsapp','WhatsApp'],
+  ['fa-brands fa-x-twitter','X'],['fa-brands fa-discord','Discord'],['fa-regular fa-envelope','Email'],['fa-solid fa-phone','Phone'],
+  ['fa-solid fa-store','Shop'],['fa-solid fa-cart-shopping','Cart'],['fa-solid fa-rocket','Rocket'],['fa-solid fa-id-badge','Badge'],
+  ['fa-solid fa-code','Code'],['fa-brands fa-react','React'],['fa-solid fa-pen-ruler','Design'],['fa-solid fa-gauge-high','Dashboard'],
+  ['fa-solid fa-globe','Website'],['fa-solid fa-mobile-screen','Mobile'],['fa-solid fa-bolt','Bolt'],['fa-solid fa-graduation-cap','School'],
+];
+const data = {
+  skills: [['HTML / CSS',90],['JavaScript',80],['React',80],['Tailwind CSS',85],['Laravel',65]].map(([name,percent],i)=>({id:'s'+i,name,percent,visible:true})),
+  resume: [
+    {id:'r1',kind:'education',title:'Bachelor of Computer Science',date:'2021 – 2025',place:'University name',visible:true},
+    {id:'r2',kind:'work',title:'Front-end developer',date:'2024 – Present',place:'Company name',visible:true},
+    {id:'r3',kind:'achievement',title:'Hackathon winner',date:'Gold · 2024',place:'Organiser',visible:true},
+  ],
+  build: [
+    {id:'b1',title:'E-commerce websites',icon:'fa-solid fa-cart-shopping',description:'An online store where customers can browse and buy your products.',visible:true},
+    {id:'b2',title:'Business websites',icon:'fa-solid fa-store',description:'A professional site for your shop or company.',visible:true},
+    {id:'b3',title:'Landing pages',icon:'fa-solid fa-rocket',description:'One focused page that gets visitors to sign up.',visible:true},
+  ],
+  projects: [
+    {id:'p1',title:'My Portfolio',description:'A responsive personal site with smooth animations.',category:'Website',image:'',live:'',code:'',visible:true},
+  ],
+  contacts: [
+    {id:'c1',platform:'GitHub',icon:'fa-brands fa-github',label:'laabythewayyy',kind:'profile',visible:true},
+    {id:'c2',platform:'Email',icon:'fa-regular fa-envelope',label:'suntola204@gmail.com',kind:'contact',visible:true},
+    {id:'c3',platform:'Instagram',icon:'fa-brands fa-instagram',label:'@_imbarryallen',kind:'social',visible:true},
+  ],
+};
+let CATS = ['Website','React app','Design'];
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+let toastTimer;
+function toast(msg='Changes saved. Your site is updated.'){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('on');clearTimeout(toastTimer);toastTimer=setTimeout(()=>t.classList.remove('on'),2200);}
+
+function seg(name, value, options){
+  return `<div class="seg" data-seg="${name}">${options.map(([v,l])=>`<button type="button" data-v="${v}" class="${v===value?'on':''}">${l}</button>`).join('')}</div>`;
+}
+function picker(value){
+  return `<div class="picker"><input type="text" placeholder="Search icons… e.g. insta, shop, code" data-search>
+    <div class="icons">${ICONS.map(([c,l])=>`<button type="button" data-icon="${c}" data-name="${l.toLowerCase()}" class="${c===value?'on':''}" title="${l}"><i class="${c}"></i><span>${l}</span></button>`).join('')}</div></div>`;
+}
+function editorFor(list, r){
+  if (list==='skills') return `
+    <label class="f">Skill<input type="text" data-k="name" value="${esc(r.name)}"></label>
+    <div class="f"><span>Level</span>
+      <div class="slider-row"><input type="range" min="0" max="100" step="5" value="${r.percent}" data-k="percent"><span class="pct">${r.percent}%</span></div>
+      <span class="hint">Drag the slider. The bar updates live.</span></div>`;
+  if (list==='resume') return `
+    <div class="f"><span>Type</span>${seg('kind', r.kind, [['education','Education'],['work','Work experience'],['achievement','Achievement']])}</div>
+    <label class="f">Title<input type="text" data-k="title" value="${esc(r.title)}" placeholder="e.g. Bachelor of Computer Science"></label>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px">
+      <label class="f">Date<input type="text" data-k="date" value="${esc(r.date)}" placeholder="2021 – 2025"></label>
+      <label class="f">Place<input type="text" data-k="place" value="${esc(r.place)}" placeholder="School, company or organiser"></label></div>
+    <label class="f">Bullet points<textarea placeholder="One point per line"></textarea><span class="hint">One point per line.</span></label>`;
+  if (list==='build') return `
+    <div class="f"><span>Icon</span>${picker(r.icon)}</div>
+    <label class="f">Title<input type="text" data-k="title" value="${esc(r.title)}" placeholder="e.g. E-commerce websites"></label>
+    <label class="f">One short line<textarea placeholder="What it is, in plain words">${esc(r.description)}</textarea></label>`;
+  if (list==='projects') return `
+    <label class="f">Title<input type="text" data-k="title" value="${esc(r.title)}" placeholder="e.g. Coffee shop website"></label>
+    <label class="f">Description<textarea placeholder="One or two sentences about it">${esc(r.description)}</textarea></label>
+    <div class="f"><span>Category</span>${seg('category', r.category, [['','None'], ...CATS.map(c=>[c,c])])}</div>
+    <div class="f"><span>Screenshot</span><label class="drop" data-drop>${r.image?`<img src="${r.image}" alt="">`:`<span class="dicon"><i class="fa-regular fa-image"></i></span>`}<input type="file" accept="image/*">
+      <div><b>Drop a screenshot here, or click to choose</b><span class="hint">JPG, PNG or WebP up to 5 MB.</span></div></label></div>
+    <div class="two"><label class="f">Live site link<input type="text" value="${esc(r.live)}" placeholder="https://"></label>
+      <label class="f">Code link<input type="text" value="${esc(r.code)}" placeholder="https://github.com/..."></label></div>`;
+  return `
+    <div class="f"><span>Where it shows</span>${seg('kind', r.kind, [['contact','Contact box'],['social','Social media card'],['profile','Homepage icon only']])}</div>
+    <div class="f"><span>Icon</span>${picker(r.icon)}</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px">
+      <label class="f">Platform<input type="text" data-k="platform" value="${esc(r.platform)}"></label>
+      <label class="f">Shown text<input type="text" data-k="label" value="${esc(r.label)}"></label></div>`;
+}
+function thumb(list, r){
+  if (list==='skills') return `<i class="fa-solid fa-chart-simple"></i>`;
+  if (list==='resume') return `<i class="fa-solid ${r.kind==='education'?'fa-graduation-cap':r.kind==='work'?'fa-briefcase':'fa-trophy'}"></i>`;
+  if (list==='projects') return r.image ? `<img class="shot-thumb" src="${r.image}" alt="">` : `<i class="fa-regular fa-image"></i>`;
+  return `<i class="${r.icon}"></i>`;
+}
+function rowHtml(list, r){
+  const meta = list==='skills' ? `<div class="mini-bar"><i style="width:${r.percent}%"></i></div>` :
+    list==='resume' ? `<div class="meta">${esc([r.date,r.place].filter(Boolean).join(' · '))}</div>` :
+    list==='build' ? `<div class="meta">${esc(r.description)}</div>` :
+    list==='projects' ? `<div class="meta">${esc(r.category || 'No category')}</div>` : `<div class="meta">${esc(r.label)}</div>`;
+  const title = list==='skills' ? `${esc(r.name)} <span class="meta">· <b class="pv">${r.percent}%</b></span>` : esc(r.title ?? r.platform);
+  return `<div class="item ${r.visible?'':'hidden'}" data-id="${r.id}">
+    <div class="row">
+      <div class="handle" title="Drag to reorder" aria-label="Drag to reorder"><i class="fa-solid fa-grip-vertical"></i></div>
+      <div class="thumb">${thumb(list,r)}</div>
+      <div><div class="title">${title}</div>${meta}</div>
+      <button class="toggle ${r.visible?'on':''}" data-toggle><i></i><span>${r.visible?'Visible':'Hidden'}</span></button>
+      <button class="edit" data-edit>Edit</button>
+    </div>
+    <div class="editor"><div><div class="editor-inner">${editorFor(list,r)}
+      <div class="actions"><button class="btn btn-red" data-save>Save changes</button><button class="btn btn-line" data-cancel>Cancel</button>
+        <span class="saved">✓ Saved</span><button class="del" data-del>Delete</button></div>
+    </div></div></div>
+  </div>`;
+}
+function render(list){
+  document.querySelectorAll(`[data-list="${list}"]`).forEach(box=>{
+    const g = box.dataset.group;
+    box.innerHTML = data[list].filter(r=>!g || r.kind===g).map(r=>rowHtml(list,r)).join('') || `<p class="meta" style="padding:14px 8px">Nothing here yet.</p>`;
+    new Sortable(box, { handle:'.handle', animation:200, easing:'cubic-bezier(.2,.8,.2,1)', ghostClass:'sortable-ghost', chosenClass:'sortable-chosen', dragClass:'sortable-drag',
+      onEnd(){ const order=[...box.querySelectorAll('.item')].map(el=>el.dataset.id); const others=data[list].filter(r=>!order.includes(r.id));
+        data[list] = [...others, ...order.map(id=>data[list].find(r=>r.id===id))]; toast('Order saved. Your site is updated.'); } });
+  });
+}
+['skills','resume','build','projects','contacts'].forEach(render);
+
+// ----- site text: tabs, live preview, facts, drop zones, unsaved bar -----
+const md = t => esc(t).replace(/\*\*(.+?)\*\*/g,'<strong>$1</strong>');
+function livePreview(){ const v=k=>document.querySelector(`[data-live="${k}"]`).value;
+  document.getElementById('pv-first').textContent=v('first'); document.getElementById('pv-last').textContent=v('last'); document.getElementById('pv-lead').innerHTML=md(v('lead')); }
+livePreview();
+let facts=[['Name','Tola Sann'],['Based in','Cambodia'],['Role','Junior front-end developer'],['Email','suntola204@gmail.com'],['Focus','React, Tailwind CSS'],['Freelance','Available']];
+function renderFacts(){ const box=document.getElementById('facts');
+  box.innerHTML=facts.map(([l,v],i)=>`<div class="fact" data-i="${i}"><div class="handle"><i class="fa-solid fa-grip-vertical"></i></div>
+    <input value="${esc(l)}" placeholder="Label, e.g. City"><input value="${esc(v)}" placeholder="Value, e.g. Phnom Penh"><button class="xbtn" data-rm-fact title="Remove line"><i class="fa-solid fa-xmark"></i></button></div>`).join('');
+  new Sortable(box,{handle:'.handle',animation:200,onEnd(){ dirty(); }}); }
+renderFacts();
+function dirty(){ document.getElementById('unsaved').classList.add('on'); }
+function renderCats(){ document.getElementById('cats').innerHTML = CATS.map(c=>`<span class="chip">${esc(c)}<button data-rm-cat="${esc(c)}" title="Remove"><i class="fa-solid fa-xmark"></i></button></span>`).join('') +
+  `<span class="chip-add"><input placeholder="New category" id="newcat"><button class="btn btn-line" data-add-cat style="padding:8px 14px">Add</button></span>`; }
+renderCats();
+
+// interactions (event delegation)
+document.addEventListener('click', e=>{
+  const item = e.target.closest('.item'); const list = e.target.closest('[data-list]')?.dataset.list;
+  if (e.target.closest('[data-edit]')) { document.querySelectorAll('.item.open').forEach(o=>o!==item&&o.classList.remove('open')); item.classList.toggle('open'); item.querySelector('input,textarea')?.focus({preventScroll:true}); }
+  if (e.target.closest('[data-cancel]')) item.classList.remove('open');
+  if (e.target.closest('[data-toggle]')) { const r=data[list].find(x=>x.id===item.dataset.id); r.visible=!r.visible; item.classList.toggle('hidden',!r.visible);
+    const t=e.target.closest('[data-toggle]'); t.classList.toggle('on',r.visible); t.querySelector('span').textContent=r.visible?'Visible':'Hidden'; toast(r.visible?'Shown on your site.':'Hidden from your site.'); }
+  if (e.target.closest('[data-save]')) { const s=item.querySelector('.saved'); s.classList.add('on'); setTimeout(()=>{s.classList.remove('on'); item.classList.remove('open');},900); toast(); }
+  if (e.target.closest('[data-del]')) { if(confirm('Delete this? This can\'t be undone.')){ data[list]=data[list].filter(x=>x.id!==item.dataset.id); item.style.transition='opacity .25s'; item.style.opacity=0; setTimeout(()=>render(list),250); toast('Deleted. Your site is updated.'); } }
+  const sb = e.target.closest('.seg button'); if (sb) { sb.parentElement.querySelectorAll('button').forEach(b=>b.classList.toggle('on',b===sb)); }
+  const ib = e.target.closest('[data-icon]'); if (ib) { ib.closest('.icons').querySelectorAll('button').forEach(b=>b.classList.toggle('on',b===ib)); item.querySelector('.thumb').innerHTML=`<i class="${ib.dataset.icon}"></i>`; }
+  const tb = e.target.closest('[data-tab]'); if (tb) { document.querySelectorAll('[data-tab]').forEach(b=>b.classList.toggle('on',b===tb)); document.querySelectorAll('.tab').forEach(t=>t.classList.toggle('on',t.id===tb.dataset.tab)); }
+  const pt = e.target.closest('[data-plain-toggle]'); if (pt) { pt.classList.toggle('on'); pt.querySelector('span').textContent=pt.classList.contains('on')?'On':'Off'; dirty(); }
+  if (e.target.closest('[data-add-fact]')) { facts.push(['','']); renderFacts(); document.querySelector('#facts .fact:last-child input').focus(); dirty(); }
+  const rf = e.target.closest('[data-rm-fact]'); if (rf) { facts.splice(+rf.closest('.fact').dataset.i,1); renderFacts(); dirty(); }
+  if (e.target.closest('[data-save-site]')) { document.getElementById('unsaved').classList.remove('on'); toast(); }
+  if (e.target.closest('[data-discard]')) { document.getElementById('unsaved').classList.remove('on'); toast('Changes discarded.'); }
+  const rc = e.target.closest('[data-rm-cat]'); if (rc && confirm(`Remove the category "${rc.dataset.rmCat}"? Its projects stay, without a category.`)) { CATS=CATS.filter(c=>c!==rc.dataset.rmCat); renderCats(); toast('Category removed.'); }
+  if (e.target.closest('[data-add-cat]')) { const v=document.getElementById('newcat').value.trim(); if (v && !CATS.includes(v)) { CATS.push(v); renderCats(); toast('Category added.'); } }
+  const nav = e.target.closest('[data-p]'); if (nav) { document.querySelectorAll('[data-p]').forEach(a=>a.classList.toggle('on',a===nav)); document.querySelectorAll('.page').forEach(p=>p.classList.toggle('on',p.id===nav.dataset.p)); }
+  const add = e.target.closest('[data-add]'); if (add) { const l=add.dataset.add; const id='n'+Date.now();
+    const blank = l==='build'?{id,title:'',icon:'fa-solid fa-globe',description:'',visible:true}: l==='projects'?{id,title:'',description:'',category:'',image:'',live:'',code:'',visible:true}: l==='skills'?{id,name:'New skill',percent:50,visible:true}: l==='resume'?{id,kind:'education',title:'',date:'',place:'',visible:true}:{id,platform:'',icon:'fa-solid fa-globe',label:'',kind:'social',visible:true};
+    data[l].push(blank); render(l); const el=document.querySelector(`[data-id="${id}"]`); el.classList.add('open'); el.scrollIntoView({behavior:'smooth',block:'center'}); el.querySelector('input')?.focus({preventScroll:true}); }
+});
+document.addEventListener('input', e=>{
+  if (e.target.closest('#site')) { dirty(); if (e.target.dataset.live) livePreview(); }
+  if (e.target.type==='range') { const item=e.target.closest('.item'); const v=e.target.value; item.querySelector('.pct').textContent=v+'%'; item.querySelector('.mini-bar i').style.width=v+'%'; item.querySelector('.pv').textContent=v+'%'; }
+  if (e.target.matches('[data-search]')) { const q=e.target.value.trim().toLowerCase(); e.target.nextElementSibling.querySelectorAll('button').forEach(b=>b.style.display=!q||b.dataset.name.includes(q)||b.dataset.icon.includes(q)?'':'none'); }
+  if (e.target.dataset.k==='name') { const t=e.target.closest('.item').querySelector('.title'); t.firstChild.textContent=e.target.value+' '; }
+});
+</script>
+</body>
+</html>

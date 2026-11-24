@@ -1,155 +1,216 @@
 'use client';
 
-import { useActionState, useCallback, useState } from 'react';
+import { useActionState, useCallback, useEffect, useRef, useState } from 'react';
+import Sortable from 'sortablejs';
 import { saveSettings } from './actions';
+import { renderBold } from '@/lib/format';
+import DropZone from '@/components/admin/DropZone';
 import Toast from '@/components/admin/Toast';
 
-const HEADERS = [
+const TABS = [
+  ['home', 'Home'],
   ['about', 'About'],
-  ['resume', 'Resume'],
-  ['projects', 'Projects'],
-  ['contact', 'Contact'],
+  ['heads', 'Headings'],
+  ['files', 'Avatar & CV'],
+  ['footer', 'Footer'],
 ];
-const BLOCKS = [
-  ['skills', 'Skills (in About)'],
-  ['build', 'What I can build for you (in Projects)'],
-  ['built', "Things I've built (in Projects)"],
-  ['social', 'Social media (in Contact)'],
-];
+const HEADERS = [['about', 'About'], ['resume', 'Resume'], ['projects', 'Projects'], ['contact', 'Contact']];
+const BLOCKS = [['skills', 'In About'], ['build', 'In Projects (top)'], ['built', 'In Projects (cards)'], ['social', 'In Contact']];
 
-function Text({ name, label, value, hint, area }) {
+function Text({ name, label, value, hint, area, onInput }) {
   return (
-    <label>
-      {label}
-      {area ? <textarea name={name} defaultValue={value} /> : <input type="text" name={name} defaultValue={value} />}
+    <label className="f">
+      <span>{label}</span>
+      {area ? <textarea name={name} defaultValue={value} onInput={onInput} /> : <input type="text" name={name} defaultValue={value} onInput={onInput} />}
       {hint && <span className="hint">{hint}</span>}
     </label>
   );
 }
 
-function FactsEditor({ initial }) {
-  const [facts, setFacts] = useState(initial.length ? initial : [{ label: '', value: '' }]);
-  const set = (i, key, v) => setFacts((f) => f.map((x, j) => (j === i ? { ...x, [key]: v } : x)));
-  const move = (i, d) =>
-    setFacts((f) => {
-      const j = i + d;
-      if (j < 0 || j >= f.length) return f;
-      const c = [...f];
-      [c[i], c[j]] = [c[j], c[i]];
-      return c;
+let factKey = 0;
+function FactsEditor({ initial, onChange }) {
+  const [facts, setFacts] = useState(() => (initial.length ? initial : [{ label: '', value: '' }]).map((f) => ({ ...f, k: ++factKey })));
+  const box = useRef(null);
+  const update = (next) => { setFacts(next); onChange(); };
+
+  useEffect(() => {
+    const s = Sortable.create(box.current, {
+      handle: '.handle', animation: 200,
+      onEnd(evt) {
+        if (evt.oldIndex === evt.newIndex) return;
+        const el = evt.item;
+        el.remove();
+        box.current.insertBefore(el, box.current.children[evt.oldIndex] ?? null);
+        setFacts((f) => { const c = [...f]; const [m] = c.splice(evt.oldIndex, 1); c.splice(evt.newIndex, 0, m); return c; });
+        onChange();
+      },
     });
-  return (
-    <div className="facts-editor">
-      <input type="hidden" name="about_facts" value={JSON.stringify(facts)} />
-      {facts.map((f, i) => (
-        <div className="fact" key={i}>
-          <input type="text" aria-label="Label" placeholder="Label, e.g. City" value={f.label} onChange={(e) => set(i, 'label', e.target.value)} />
-          <input type="text" aria-label="Value" placeholder="Value, e.g. Phnom Penh" value={f.value} onChange={(e) => set(i, 'value', e.target.value)} />
-          <span style={{ display: 'flex', gap: 4 }}>
-            <button type="button" className="icon-btn" aria-label="Move up" onClick={() => move(i, -1)}>▲</button>
-            <button type="button" className="icon-btn" aria-label="Move down" onClick={() => move(i, 1)}>▼</button>
-            <button type="button" className="icon-btn" aria-label="Remove line" onClick={() => setFacts((x) => x.filter((_, j) => j !== i))}>✕</button>
-          </span>
-        </div>
-      ))}
-      <button type="button" className="edit-btn" style={{ justifySelf: 'start' }} onClick={() => setFacts((f) => [...f, { label: '', value: '' }])}>
-        Add line
-      </button>
-    </div>
-  );
-}
-
-function FileField({ field, label, current, accept, hint, error, isImage }) {
-  const [preview, setPreview] = useState(current || '');
-  return (
-    <div>
-      <label>{label}</label>
-      <div className="upload">
-        {/* eslint-disable-next-line @next/next/no-img-element -- preview */}
-        {isImage && preview && <img src={preview} alt="" />}
-        {!isImage && current && (
-          <a href={current} target="_blank" rel="noopener" className="hint">
-            Current file
-          </a>
-        )}
-        <input type="file" name={field === 'avatar_url' ? 'avatar__file' : 'cv__file'} accept={accept}
-          onChange={(e) => { const f = e.target.files?.[0]; if (f && isImage) setPreview(URL.createObjectURL(f)); }} />
-        {current && (
-          <label className="check">
-            <input type="checkbox" name={`${field}__remove`} /> <span>Use the default instead</span>
-          </label>
-        )}
-      </div>
-      <span className="hint">{hint}</span>
-      {error && <span className="field-error">{error}</span>}
-    </div>
-  );
-}
-
-export default function SettingsForm({ settings: s }) {
-  const [state, action, pending] = useActionState(saveSettings, {});
-  // show the toast once per successful save (state.at is the save time)
-  const [dismissedAt, setDismissedAt] = useState(0);
-  const toast = state?.ok && state.at !== dismissedAt ? 'Changes saved. Your site is updated.' : '';
-  const clear = useCallback(() => setDismissedAt(state?.at ?? 0), [state]);
-  const err = state?.errors || {};
+    return () => s.destroy();
+  }, [onChange]);
 
   return (
-    <form action={action} className="adm-form">
-      <section className="settings-group">
-        <h2>Home</h2>
-        <div className="two">
-          <Text name="first_name" label="First name" value={s.first_name} />
-          <Text name="last_name" label="Last name (shown in red)" value={s.last_name} />
-        </div>
-        <Text name="role_line" label="Short description" value={s.role_line} area hint="Wrap words in **double stars** to make them bold." />
-        <FileField field="avatar_url" label="Avatar" current={s.avatar_url} accept="image/jpeg,image/png,image/webp" isImage
-          hint="JPG, PNG or WebP with a transparent background works best. Up to 5 MB." error={err.avatar_url} />
-        <label className="check">
-          <input type="checkbox" name="open_to_work" defaultChecked={s.open_to_work} /> <span>Show the &quot;Open to work&quot; badge</span>
-        </label>
-        <FileField field="cv_url" label="CV (PDF)" current={s.cv_url} accept="application/pdf" hint="PDF, up to 5 MB." error={err.cv_url} />
-      </section>
-
-      <section className="settings-group">
-        <h2>About</h2>
-        <Text name="about_title" label="Title" value={s.about_title} />
-        <Text name="about_body" label="Paragraph (before the info list)" value={s.about_body} area hint="**bold** works here too." />
-        <div>
-          <label>Info list</label>
-          <FactsEditor initial={s.about_facts} />
-        </div>
-        <Text name="about_body_2" label="Paragraph (after the info list, optional)" value={s.about_body_2} area />
-      </section>
-
-      <section className="settings-group">
-        <h2>Section headings</h2>
-        {HEADERS.map(([k, name]) => (
-          <div className="two" key={k}>
-            <Text name={`sh_${k}_label`} label={`${name}: small label`} value={s.section_headers[k].label} />
-            <Text name={`sh_${k}_heading`} label={`${name}: big heading`} value={s.section_headers[k].heading} />
+    <div className="f">
+      <span>Info list <span className="hint">Drag the handle to reorder.</span></span>
+      <input type="hidden" name="about_facts" value={JSON.stringify(facts.map(({ label, value }) => ({ label, value })))} />
+      <div className="facts" ref={box}>
+        {facts.map((f, i) => (
+          <div className="fact" key={f.k}>
+            <div className="handle" aria-label="Drag to reorder"><i className="fa-solid fa-grip-vertical" aria-hidden="true" /></div>
+            <input value={f.label} placeholder="Label, e.g. City" aria-label="Label"
+              onChange={(e) => update(facts.map((x, j) => (j === i ? { ...x, label: e.target.value } : x)))} />
+            <input value={f.value} placeholder="Value, e.g. Phnom Penh" aria-label="Value"
+              onChange={(e) => update(facts.map((x, j) => (j === i ? { ...x, value: e.target.value } : x)))} />
+            <button type="button" className="xbtn" aria-label="Remove line" onClick={() => update(facts.filter((_, j) => j !== i))}>
+              <i className="fa-solid fa-xmark" aria-hidden="true" />
+            </button>
           </div>
         ))}
-        <h2 style={{ fontSize: 18, marginTop: 6 }}>Smaller titles</h2>
-        <div className="two">
-          {BLOCKS.map(([k, name]) => (
-            <Text key={k} name={`bt_${k}`} label={name} value={s.block_titles[k]} />
+      </div>
+      <button type="button" className="btn btn-line btn-sm" style={{ justifySelf: 'start', marginTop: 4 }}
+        onClick={() => update([...facts, { label: '', value: '', k: ++factKey }])}>
+        <i className="fa-solid fa-plus" aria-hidden="true" /> Add line
+      </button>
+    </div>
+  );
+}
+
+/** All fields. Remounted (via key) on Discard so everything returns to the saved values. */
+function Fields({ s, onDirty, onSaved }) {
+  const [state, action, pending] = useActionState(saveSettings, {});
+  const [tab, setTab] = useState('home');
+  const [first, setFirst] = useState(s.first_name);
+  const [last, setLast] = useState(s.last_name);
+  const [lead, setLead] = useState(s.role_line);
+  const [open, setOpen] = useState(!!s.open_to_work);
+  const err = state?.errors || {};
+
+  useEffect(() => { if (state?.ok) onSaved(); }, [state, onSaved]);
+  // an upload problem lives on the Avatar & CV tab: show it
+  const fileError = err.avatar_url || err.cv_url;
+
+  return (
+    <form action={action} onInput={onDirty}>
+      <div className="tabs" role="tablist">
+        {TABS.map(([k, label]) => (
+          <button key={k} type="button" role="tab" aria-selected={tab === k} className={tab === k ? 'on' : undefined} onClick={() => setTab(k)}>
+            {label}{k === 'files' && fileError ? ' ⚠' : ''}
+          </button>
+        ))}
+      </div>
+
+      <div className={`tab${tab === 'home' ? ' on' : ''}`}>
+        <div className="preview" aria-label="Live preview">
+          <small>Live preview</small>
+          <div className="pname">{first} <span>{last}</span></div>
+          <p className="plead" dangerouslySetInnerHTML={{ __html: renderBold(lead) }} />
+        </div>
+        <div className="card">
+          <div className="two">
+            <label className="f"><span>First name</span><input type="text" name="first_name" value={first} onChange={(e) => setFirst(e.target.value)} /></label>
+            <label className="f"><span>Last name <span className="hint">(shown in red)</span></span><input type="text" name="last_name" value={last} onChange={(e) => setLast(e.target.value)} /></label>
+          </div>
+          <label className="f">
+            <span>Short description</span>
+            <textarea name="role_line" value={lead} onChange={(e) => setLead(e.target.value)} />
+            <span className="hint">Put **double stars** around words to make them bold. The preview above updates as you type.</span>
+          </label>
+          <div className="switch-row">
+            <div><b>&quot;Open to work&quot; badge</b><div className="hint">Shows under your avatar on the homepage.</div></div>
+            <input type="hidden" name="open_to_work" value={open ? 'on' : ''} />
+            <button type="button" className={`toggle${open ? ' on' : ''}`} aria-pressed={open} onClick={() => { setOpen((x) => !x); onDirty(); }}>
+              <i aria-hidden="true" /><span>{open ? 'On' : 'Off'}</span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div className={`tab${tab === 'about' ? ' on' : ''}`}>
+        <div className="card">
+          <Text name="about_title" label="Title" value={s.about_title} />
+          <Text name="about_body" label="Paragraph" value={s.about_body} area hint="**bold** works here too." />
+          <FactsEditor initial={s.about_facts} onChange={onDirty} />
+          <label className="f">
+            <span>Second paragraph <span className="hint">(optional)</span></span>
+            <textarea name="about_body_2" defaultValue={s.about_body_2} />
+          </label>
+        </div>
+      </div>
+
+      <div className={`tab${tab === 'heads' ? ' on' : ''}`}>
+        <div className="card">
+          <h2>Section headings</h2>
+          {HEADERS.map(([k, name]) => (
+            <div className="two" key={k}>
+              <Text name={`sh_${k}_label`} label={`${name}: small label`} value={s.section_headers[k].label} />
+              <Text name={`sh_${k}_heading`} label={`${name}: big heading`} value={s.section_headers[k].heading} />
+            </div>
           ))}
         </div>
-      </section>
+        <div className="card">
+          <h2>Smaller titles</h2>
+          <div className="two">
+            {BLOCKS.map(([k, name]) => <Text key={k} name={`bt_${k}`} label={name} value={s.block_titles[k]} />)}
+          </div>
+        </div>
+      </div>
 
-      <section className="settings-group">
-        <h2>Projects, footer and page title</h2>
-        <Text name="build_more_text" label='"Need something else?" line' value={s.build_more_text} area />
-        <Text name="copyright_text" label="Copyright line" value={s.copyright_text} />
-        <Text name="site_title" label="Browser tab title" value={s.site_title} />
-      </section>
+      <div className={`tab${tab === 'files' ? ' on' : ''}`}>
+        <div className="card">
+          <h2>Avatar</h2>
+          <DropZone fileName="avatar__file" removeName="avatar_url__remove" current={s.avatar_url} kind="image" onChange={onDirty}
+            title="Drop a new image here, or click to choose" hint="JPG, PNG or WebP up to 5 MB. A transparent background looks best." />
+          {err.avatar_url && <span className="field-error">{err.avatar_url}</span>}
+        </div>
+        <div className="card">
+          <h2>CV</h2>
+          <DropZone fileName="cv__file" removeName="cv_url__remove" current={s.cv_url} kind="pdf" onChange={onDirty}
+            title={s.cv_url ? 'Your uploaded CV' : 'Default CV (portfolio-tola.pdf)'} hint="Drop a new PDF here, or click to choose. Up to 5 MB." />
+          {err.cv_url && <span className="field-error">{err.cv_url}</span>}
+        </div>
+      </div>
+
+      <div className={`tab${tab === 'footer' ? ' on' : ''}`}>
+        <div className="card">
+          <Text name="build_more_text" label='"Need something else?" line (Projects)' value={s.build_more_text} area />
+          <Text name="copyright_text" label="Copyright line" value={s.copyright_text} />
+          <Text name="site_title" label="Browser tab title" value={s.site_title} />
+        </div>
+      </div>
 
       {state?.error && <p className="form-error">{state.error}</p>}
-      <button type="submit" className="btn btn-red" disabled={pending}>
-        {pending ? 'Saving…' : 'Save changes'}
-      </button>
-      <Toast message={toast} onDone={clear} />
+      <UnsavedBar pending={pending} />
     </form>
+  );
+}
+
+/** Shown while there are unsaved edits (the parent toggles .on through the data attribute). */
+function UnsavedBar({ pending }) {
+  return (
+    <div className="unsaved" data-unsaved>
+      <span><b>You have unsaved changes.</b> <span className="hint">Nothing is saved until you click Save.</span></span>
+      <span className="actions">
+        <button type="button" className="btn btn-line" data-discard>Discard</button>
+        <button type="submit" className="btn btn-red" disabled={pending}>{pending ? 'Saving…' : 'Save changes'}</button>
+      </span>
+    </div>
+  );
+}
+
+export default function SettingsForm({ settings }) {
+  const [dirty, setDirty] = useState(false);
+  const [version, setVersion] = useState(0);
+  const [toast, setToast] = useState('');
+  const onDirty = useCallback(() => setDirty(true), []);
+  const onSaved = useCallback(() => { setDirty(false); setToast('Changes saved. Your site is updated.'); }, []);
+  const clearToast = useCallback(() => setToast(''), []);
+
+  return (
+    <div className={dirty ? 'is-dirty' : undefined}
+      onClick={(e) => {
+        if (e.target.closest('[data-discard]')) { setVersion((v) => v + 1); setDirty(false); setToast('Changes discarded.'); }
+      }}>
+      <Fields key={version} s={settings} onDirty={onDirty} onSaved={onSaved} />
+      <Toast message={toast} onDone={clearToast} />
+    </div>
   );
 }

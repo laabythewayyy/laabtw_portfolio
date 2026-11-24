@@ -1,30 +1,38 @@
 import { describe, expect, test } from 'vitest';
-import { swapOrder } from '@/lib/admin/order';
+import { applyGroupOrder } from '@/lib/admin/order';
 
-const rows = [
-  { id: 'a', sort_order: 0 },
-  { id: 'b', sort_order: 1 },
+// whole table, already sorted by sort_order
+const all = [
+  { id: 'e1', kind: 'education' },
+  { id: 'w1', kind: 'work' },
+  { id: 'e2', kind: 'education' },
+  { id: 'a1', kind: 'achievement' },
+  { id: 'w2', kind: 'work' },
 ];
 
-describe('swapOrder', () => {
-  test('moving the second row up swaps the two sort_orders', () => {
-    expect(swapOrder(rows, 'b', 'up')).toEqual([
-      { id: 'b', sort_order: 0 },
+describe('applyGroupOrder', () => {
+  test('a simple list is renumbered 0..n-1 in the dragged order', () => {
+    const rows = [{ id: 'a' }, { id: 'b' }, { id: 'c' }];
+    expect(applyGroupOrder(rows, ['c', 'a', 'b'])).toEqual([
+      { id: 'c', sort_order: 0 },
       { id: 'a', sort_order: 1 },
+      { id: 'b', sort_order: 2 },
     ]);
   });
-  test('the first row cannot move up', () => expect(swapOrder(rows, 'a', 'up')).toEqual([]));
-  test('the last row cannot move down', () => expect(swapOrder(rows, 'b', 'down')).toEqual([]));
-  test('rows with equal sort_order still get distinct values after a swap', () => {
-    const same = [{ id: 'a', sort_order: 0 }, { id: 'b', sort_order: 0 }];
-    const out = swapOrder(same, 'b', 'up');
-    expect(out.find((r) => r.id === 'b').sort_order).toBeLessThan(out.find((r) => r.id === 'a').sort_order);
+
+  test('reordering one group keeps the other groups in their slots', () => {
+    const out = applyGroupOrder(all, ['w2', 'w1'], (r) => r.kind === 'work');
+    expect(out.map((r) => r.id)).toEqual(['e1', 'w2', 'e2', 'a1', 'w1']);
+    expect(out.map((r) => r.sort_order)).toEqual([0, 1, 2, 3, 4]);
   });
-  test('works when positions have gaps (0, 3, 5)', () => {
-    const gappy = [{ id: 'a', sort_order: 0 }, { id: 'b', sort_order: 3 }, { id: 'c', sort_order: 5 }];
-    expect(swapOrder(gappy, 'c', 'up')).toEqual([
-      { id: 'c', sort_order: 3 },
-      { id: 'b', sort_order: 5 },
-    ]);
+
+  test('unknown ids in the new order are ignored', () => {
+    const rows = [{ id: 'a' }, { id: 'b' }];
+    expect(applyGroupOrder(rows, ['b', 'ghost', 'a']).map((r) => r.id)).toEqual(['b', 'a']);
+  });
+
+  test('an order that leaves out some of the group keeps them after the listed ones', () => {
+    const rows = [{ id: 'a' }, { id: 'b' }, { id: 'c' }];
+    expect(applyGroupOrder(rows, ['c']).map((r) => r.id)).toEqual(['c', 'a', 'b']);
   });
 });

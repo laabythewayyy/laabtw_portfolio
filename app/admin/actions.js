@@ -3,7 +3,7 @@
 import { revalidatePath, updateTag } from 'next/cache';
 import { ADMIN_SECTIONS } from '@/lib/admin/schema';
 import { validate, validateUpload } from '@/lib/admin/validate';
-import { deleteRow, moveRow, saveRow, setVisible } from '@/lib/admin/crud';
+import { deleteRow, reorderRows, saveRow, setVisible } from '@/lib/admin/crud';
 import { uploadMedia } from '@/lib/storage';
 import { SITE_TAG } from '@/lib/site-content';
 
@@ -52,8 +52,9 @@ export async function deleteRowAction(section, id) {
   refresh(section);
 }
 
-export async function moveRowAction(section, id, dir) {
-  await moveRow(section, id, dir);
+/** Called when a row is dropped after dragging: ids = that group's rows in the new order. */
+export async function reorderAction(section, ids) {
+  await reorderRows(section, ids);
   refresh(section);
 }
 

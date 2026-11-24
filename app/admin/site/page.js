@@ -9,10 +9,10 @@ export default async function SiteTextPage() {
   const { settings } = shapeContent({ settings: data, skills: [], resume: [], build: [], categories: [], projects: [], contacts: [] });
   return (
     <>
-      <div className="adm-head">
+      <div className="head">
         <div>
           <h1>Site text</h1>
-          <p className="adm-sub">Your name, description, avatar, About text, headings and CV.</p>
+          <p className="sub">Your name, description, avatar, About text, headings and CV.</p>
         </div>
       </div>
       <SettingsForm settings={settings} />

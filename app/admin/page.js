@@ -19,10 +19,10 @@ export default async function AdminHome() {
   );
   return (
     <>
-      <div className="adm-head">
+      <div className="head">
         <div>
           <h1>Dashboard</h1>
-          <p className="adm-sub">Everything on your website. Pick a part to edit.</p>
+          <p className="sub">Everything on your website. Pick a part to edit.</p>
         </div>
         <a className="btn btn-line" href="/" target="_blank" rel="noopener">
           View site

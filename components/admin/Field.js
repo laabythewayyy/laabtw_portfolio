@@ -1,81 +1,58 @@
 'use client';
 
 import { useState } from 'react';
+import { ICONS } from '@/lib/admin/icons';
+import DropZone from './DropZone';
 
-/** One form field, drawn from a schema field definition. `options` is the resolved list for select fields. */
-export default function Field({ field, value, error, options }) {
-  const id = `f-${field.name}`;
-  const label = (
+function Label({ field, extra }) {
+  return (
     <span>
       {field.label}
       {field.required ? ' *' : ''}
+      {extra}
     </span>
   );
-  const hint = field.hint && <span className="hint">{field.hint}</span>;
+}
+
+/** One form field from a schema definition: slider, choice buttons, icon picker, drop zone, switch or text. */
+export default function Field({ field, value, error, options }) {
   const err = error && <span className="field-error">{error}</span>;
+  const hint = field.hint && <span className="hint">{field.hint}</span>;
 
   switch (field.type) {
-    case 'textarea':
+    case 'percent':
+      return <Slider field={field} value={value} err={err} />;
+    case 'select':
+      return <Choice field={field} value={value} options={options} err={err} />;
+    case 'icon':
+      return <IconPicker field={field} value={value} err={err} />;
+    case 'toggle':
+      return <Switch field={field} value={value} />;
+    case 'image':
       return (
-        <label htmlFor={id}>
-          {label}
-          <textarea id={id} name={field.name} defaultValue={value ?? ''} />
-          {hint}
+        <div className="f">
+          <Label field={field} />
+          <DropZone fileName={`${field.name}__file`} urlName={field.name} removeName={`${field.name}__remove`} current={value} kind="image"
+            title="Drop a screenshot here, or click to choose" />
           {err}
-        </label>
+        </div>
       );
+    case 'textarea':
     case 'bullets':
       return (
-        <label htmlFor={id}>
-          {label}
-          <textarea id={id} name={field.name} defaultValue={(value ?? []).join('\n')} />
-          {hint}
-          {err}
-        </label>
-      );
-    case 'percent':
-      return <PercentField id={id} field={field} value={value} label={label} hint={hint} err={err} />;
-    case 'icon':
-      return <IconField id={id} field={field} value={value} label={label} hint={hint} err={err} />;
-    case 'select':
-      return (
-        <label htmlFor={id}>
-          {label}
-          <select id={id} name={field.name} defaultValue={value ?? ''}>
-            {!field.required && <option value="">None</option>}
-            {options.map((o) => (
-              <option key={o.value} value={o.value}>
-                {o.label}
-              </option>
-            ))}
-          </select>
-          {hint}
-          {err}
-        </label>
-      );
-    case 'toggle':
-      return (
-        <label htmlFor={id} className="check">
-          <input id={id} type="checkbox" name={field.name} defaultChecked={!!value} />
-          <span>{field.label}</span>
-        </label>
-      );
-    case 'image':
-      return <ImageField id={id} field={field} value={value} label={label} err={err} />;
-    case 'url':
-      return (
-        <label htmlFor={id}>
-          {label}
-          <input id={id} type="text" inputMode="url" name={field.name} defaultValue={value ?? ''} placeholder="https://" />
+        <label className="f">
+          <Label field={field} />
+          <textarea name={field.name} defaultValue={field.type === 'bullets' ? (value ?? []).join('\n') : value ?? ''} />
           {hint}
           {err}
         </label>
       );
     default:
       return (
-        <label htmlFor={id}>
-          {label}
-          <input id={id} type="text" name={field.name} defaultValue={value ?? ''} />
+        <label className="f">
+          <Label field={field} />
+          <input type="text" inputMode={field.type === 'url' ? 'url' : undefined} name={field.name} defaultValue={value ?? ''}
+            placeholder={field.type === 'url' ? 'https://' : undefined} />
           {hint}
           {err}
         </label>
@@ -83,64 +60,76 @@ export default function Field({ field, value, error, options }) {
   }
 }
 
-function PercentField({ id, field, value, label, hint, err }) {
-  const [v, setV] = useState(value ?? '');
-  const n = Math.min(100, Math.max(0, Number(v) || 0));
+function Slider({ field, value, err }) {
+  const [v, setV] = useState(value ?? 50);
   return (
-    <label htmlFor={id}>
-      {label}
-      <input id={id} type="number" min="0" max="100" name={field.name} value={v} onChange={(e) => setV(e.target.value)} />
-      <span className="percent-preview" aria-hidden="true">
-        <i style={{ width: `${n}%` }} />
-      </span>
-      {hint}
-      {err}
-    </label>
-  );
-}
-
-function IconField({ id, field, value, label, hint, err }) {
-  const [v, setV] = useState(value ?? '');
-  return (
-    <label htmlFor={id}>
-      {label}
-      <span className="icon-preview">
-        <i className={v} aria-hidden="true" />
-        <input id={id} type="text" name={field.name} value={v} onChange={(e) => setV(e.target.value)} placeholder="fa-brands fa-github" />
-      </span>
-      {hint}
-      {err}
-    </label>
-  );
-}
-
-function ImageField({ id, field, value, label, err }) {
-  const [preview, setPreview] = useState(value || '');
-  return (
-    <div>
-      <label htmlFor={id}>{label}</label>
-      <div className="upload">
-        {/* eslint-disable-next-line @next/next/no-img-element -- local preview */}
-        {preview && <img src={preview} alt="" />}
-        <input
-          id={id}
-          type="file"
-          name={`${field.name}__file`}
-          accept="image/jpeg,image/png,image/webp"
-          onChange={(e) => {
-            const f = e.target.files?.[0];
-            if (f) setPreview(URL.createObjectURL(f));
-          }}
-        />
-        <input type="hidden" name={field.name} value={value ?? ''} />
-        {value && (
-          <label className="check">
-            <input type="checkbox" name={`${field.name}__remove`} /> <span>Remove image</span>
-          </label>
-        )}
+    <div className="f">
+      <Label field={field} />
+      <div className="slider-row">
+        <input type="range" min="0" max="100" step="1" name={field.name} value={v} onChange={(e) => setV(e.target.value)} aria-label={field.label} />
+        <span className="pct">{v}%</span>
       </div>
-      <span className="hint">JPG, PNG or WebP, up to 5 MB.</span>
+      <span className="hint">Drag the slider. The bar updates live.</span>
       {err}
+    </div>
+  );
+}
+
+function Choice({ field, value, options, err }) {
+  const list = field.required ? options : [{ value: '', label: 'None' }, ...options];
+  const [v, setV] = useState(value ?? (field.required ? list[0]?.value : ''));
+  return (
+    <div className="f">
+      <Label field={field} />
+      <input type="hidden" name={field.name} value={v ?? ''} />
+      <div className="seg" role="radiogroup" aria-label={field.label}>
+        {list.map((o) => (
+          <button key={o.value} type="button" role="radio" aria-checked={o.value === v} className={o.value === v ? 'on' : undefined} onClick={() => setV(o.value)}>
+            {o.label}
+          </button>
+        ))}
+      </div>
+      {err}
+    </div>
+  );
+}
+
+function IconPicker({ field, value, err }) {
+  const [v, setV] = useState(value ?? '');
+  const [q, setQ] = useState('');
+  const query = q.trim().toLowerCase();
+  const shown = ICONS.filter(([c, n]) => !query || n.toLowerCase().includes(query) || c.includes(query));
+  return (
+    <div className="f">
+      <Label field={field} />
+      <input type="hidden" name={field.name} value={v} />
+      <div className="picker">
+        <input type="text" placeholder="Search icons… e.g. insta, shop, code" value={q} onChange={(e) => setQ(e.target.value)} aria-label="Search icons" />
+        <div className="icons">
+          {shown.map(([c, n]) => (
+            <button key={c} type="button" title={n} className={c === v ? 'on' : undefined} aria-pressed={c === v} onClick={() => setV(c)}>
+              <i className={c} aria-hidden="true" />
+              <span>{n.split(' ')[0]}</span>
+            </button>
+          ))}
+          {shown.length === 0 && <p className="hint" style={{ gridColumn: '1/-1' }}>No icon found. Try another word.</p>}
+        </div>
+      </div>
+      {err}
+    </div>
+  );
+}
+
+function Switch({ field, value }) {
+  const [on, setOn] = useState(!!value);
+  return (
+    <div className="switch-row">
+      <b>{field.label}</b>
+      <input type="hidden" name={field.name} value={on ? 'on' : ''} />
+      <button type="button" className={`toggle${on ? ' on' : ''}`} aria-pressed={on} onClick={() => setOn((x) => !x)}>
+        <i aria-hidden="true" />
+        <span>{on ? 'On' : 'Off'}</span>
+      </button>
     </div>
   );
 }
