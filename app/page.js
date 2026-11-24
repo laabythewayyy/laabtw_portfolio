@@ -1,23 +1,38 @@
 import { getSiteContent } from '@/lib/site-content';
+import Portfolio from '@/components/site/Portfolio';
+import Intro from '@/components/site/Intro';
+import HeroArt from '@/components/site/HeroArt';
+import SectionHead from '@/components/site/SectionHead';
+import PhoneMenu from '@/components/site/PhoneMenu';
+import Cursor from '@/components/site/Cursor';
 
-// Temporary check page (replaced in Task 4): proves the content loads from Supabase.
+export async function generateMetadata() {
+  const { settings } = await getSiteContent();
+  return { title: settings.site_title };
+}
+
 export default async function Home() {
-  const c = await getSiteContent();
+  const content = await getSiteContent();
+  const { settings } = content;
+  const head = (key) => (
+    <SectionHead id={`t-${key}`} label={settings.section_headers[key].label} heading={settings.section_headers[key].heading} />
+  );
+
   return (
-    <pre style={{ padding: 24 }}>
-      {JSON.stringify(
-        {
-          name: `${c.settings.first_name} ${c.settings.last_name}`,
-          skills: c.skills.length,
-          build: c.build.length,
-          projects: c.projects.map((p) => `${p.title} (${p.category})`),
-          filters: c.filters,
-          hero: c.contacts.hero.map((h) => h.platform),
-          resumeEmpty: c.resumeEmpty,
-        },
-        null,
-        2,
-      )}
-    </pre>
+    <>
+      <Portfolio>
+        <div className="home">
+          <Intro settings={settings} cvUrl={content.cvUrl} heroLinks={content.contacts.hero} />
+          <HeroArt avatarUrl={content.avatarUrl} openToWork={settings.open_to_work} />
+        </div>
+        {/* Section panels: filled in Tasks 5–7 */}
+        <section className="panel" id="p-about" aria-labelledby="t-about">{head('about')}</section>
+        <section className="panel" id="p-resume" aria-labelledby="t-resume">{head('resume')}</section>
+        <section className="panel" id="p-projects" aria-labelledby="t-projects">{head('projects')}</section>
+        <section className="panel" id="p-contact" aria-labelledby="t-contact">{head('contact')}</section>
+      </Portfolio>
+      <PhoneMenu />
+      <Cursor />
+    </>
   );
 }
