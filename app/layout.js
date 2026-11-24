@@ -14,7 +14,7 @@ export const metadata = {
 
 export default function RootLayout({ children }) {
   return (
-    <html lang="en" className={`${barlow.variable} ${barlowSc.variable}`}>
+    <html lang="en" className={`${barlow.variable} ${barlowSc.variable}`} data-scroll-behavior="smooth">
       <body>{children}</body>
     </html>
   );

@@ -100,7 +100,7 @@ function Fields({ s, onDirty, onSaved }) {
         ))}
       </div>
 
-      <div className={`tab${tab === 'home' ? ' on' : ''}`}>
+      <div className={`tab tab-home${tab === 'home' ? ' on' : ''}`}>
         <div className="preview" aria-label="Live preview">
           <small>Live preview</small>
           <div className="pname">{first} <span>{last}</span></div>
@@ -136,7 +136,7 @@ function Fields({ s, onDirty, onSaved }) {
         </div>
       </div>
 
-      <div className={`tab${tab === 'heads' ? ' on' : ''}`}>
+      <div className={`tab tab-heads${tab === 'heads' ? ' on' : ''}`}>
         <div className="card">
           <h2>Section headings</h2>
           {HEADERS.map(([k, name]) => (
@@ -154,7 +154,7 @@ function Fields({ s, onDirty, onSaved }) {
         </div>
       </div>
 
-      <div className={`tab${tab === 'files' ? ' on' : ''}`}>
+      <div className={`tab tab-files${tab === 'files' ? ' on' : ''}`}>
         <div className="card">
           <h2>Avatar</h2>
           <DropZone fileName="avatar__file" removeName="avatar_url__remove" current={s.avatar_url} kind="image" onChange={onDirty}

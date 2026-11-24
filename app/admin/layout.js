@@ -2,7 +2,7 @@ import { Suspense } from 'react';
 import { connection } from 'next/server';
 import { requireAdmin } from '@/lib/supabase/server';
 import Sidebar from '@/components/admin/Sidebar';
-import Loading from './loading';
+import Loading from '@/components/admin/Loading';
 import './admin.css';
 
 export const metadata = { title: 'Dashboard · Tola Sann', robots: { index: false } };
