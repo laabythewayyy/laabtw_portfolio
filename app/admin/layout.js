@@ -16,7 +16,10 @@ async function Guard({ children }) {
 export default function AdminLayout({ children }) {
   return (
     <div className="adm">
-      <Sidebar />
+      {/* the sidebar highlights the current page (reads the URL), so it streams in */}
+      <Suspense fallback={<nav className="adm-side" aria-label="Dashboard" />}>
+        <Sidebar />
+      </Suspense>
       <main className="adm-main">
         <Suspense fallback={<p className="hint">Loading…</p>}>
           <Guard>{children}</Guard>
