@@ -110,3 +110,5 @@ button:disabled{opacity:.55;cursor:default}
   .two,.facts-editor .fact{grid-template-columns:1fr}
 }
 @media (prefers-reduced-motion:reduce){.drawer,.drawer-back,.toast{animation:none}}
+.adm-form{max-width:860px}
+.adm-form > .btn{position:sticky;bottom:16px}
