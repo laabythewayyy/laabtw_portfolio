@@ -137,7 +137,8 @@ body.open .panel.leaving{display:block;position:absolute;left:0;right:0;top:0;an
 .facts b{font-weight:600;white-space:nowrap}
 .facts span{color:var(--grey);overflow-wrap:break-word;min-width:0}   /* never split a word unless it cannot fit at all */
 /* skills: bars with percentages */
-.skills{display:grid;grid-template-columns:1fr 1fr;gap:22px 56px}
+.skills{display:grid;grid-template-columns:1fr 1fr;grid-template-rows:repeat(var(--rows,5),auto);grid-auto-flow:column;gap:22px 56px}   /* fills down the left column first, so the order reads top to bottom */
+.resume-empty{color:var(--grey);font-size:17px}
 .bar .top{display:flex;justify-content:space-between;font-weight:600;font-size:15px;margin-bottom:8px}
 .bar .top span{color:var(--grey);font-weight:500}
 .bar .track{height:8px;background:#222;border-radius:0;overflow:hidden}
@@ -253,6 +254,7 @@ a.cbox:hover h3{color:var(--gold)}
   .slider{grid-template-columns:minmax(0,1fr)}
   .arrow{display:none}
   .about,.contact,.contact.social,.skills,.facts,.resume,.build-grid{grid-template-columns:1fr}
+.skills{grid-auto-flow:row;grid-template-rows:none}
   .build-item{border-left:0;padding-left:0}
   .build-item+.build-item{border-top:1px solid var(--line)}
   .about .pic{max-width:280px}
