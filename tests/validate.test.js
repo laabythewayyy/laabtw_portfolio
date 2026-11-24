@@ -72,3 +72,11 @@ describe('validateUpload', () => {
     expect(validateUpload({ size: 1000, type: 'image/webp' }, 'image')).toBeNull();
   });
 });
+
+describe('unknown sections', () => {
+  test('names that exist on every JS object are rejected, not looked up', async () => {
+    const { validate } = await import('@/lib/admin/validate');
+    expect(() => validate('constructor', {})).toThrow(/Unknown section/);
+    expect(() => validate('__proto__', {})).toThrow(/Unknown section/);
+  });
+});

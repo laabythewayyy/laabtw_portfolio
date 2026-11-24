@@ -2,7 +2,8 @@
 
 import { revalidatePath, updateTag } from 'next/cache';
 import { unstable_rethrow } from 'next/navigation';
-import { ADMIN_SECTIONS } from '@/lib/admin/schema';
+import { getSection } from '@/lib/admin/schema';
+import { requireAdmin } from '@/lib/supabase/server';
 import { validate } from '@/lib/admin/validate';
 import { applyUploads } from '@/lib/admin/uploads';
 import { deleteRow, reorderRows, saveRow, setVisible } from '@/lib/admin/crud';
@@ -33,7 +34,8 @@ async function attempt(section, change) {
 
 /** Used with useActionState: saveRowAction.bind(null, section, id) → (prevState, formData) */
 export async function saveRowAction(section, id, _prev, formData) {
-  const def = ADMIN_SECTIONS[section];
+  await requireAdmin(); // first, before any upload or validation work
+  const def = getSection(section);
   if (!def) return { ok: false, error: SAVE_FAILED };
   const values = Object.fromEntries(def.fields.map((f) => [f.name, formData.get(f.name)]));
 

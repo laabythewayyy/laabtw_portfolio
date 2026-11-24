@@ -35,3 +35,11 @@ describe('parseSettingsForm', () => {
     expect(v.section_headers.contact).toEqual({ label: 'Contact', heading: "Let's work together" });
   });
 });
+
+describe('site title', () => {
+  test('an empty browser tab title falls back to the default instead of going blank', async () => {
+    const { parseSettingsForm } = await import('@/lib/admin/settings');
+    const v = parseSettingsForm({ get: (k) => (k === 'site_title' ? '   ' : null) });
+    expect(v.site_title).toBe('Tola Sann');
+  });
+});
