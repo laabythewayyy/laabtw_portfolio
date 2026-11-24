@@ -1,39 +1,38 @@
 'use client';
 
-import { useCallback, useRef, useState, useTransition } from 'react';
-import { useRouter } from 'next/navigation';
+import { useRef, useState } from 'react';
 import { deleteRowAction, saveRowAction } from '@/app/admin/actions';
+import { useAdminAction } from './useAdminAction';
 import Toast from './Toast';
 
 /** Project categories as chips: ✕ removes one (its projects stay, uncategorised), the box adds a new one. */
 export default function CategoryChips({ categories }) {
-  const router = useRouter();
   const input = useRef(null);
-  const [toast, setToast] = useState('');
   const [error, setError] = useState('');
-  const [busy, startTransition] = useTransition();
-  const clearToast = useCallback(() => setToast(''), []);
+  const { run, busy, toast, clearToast } = useAdminAction();
 
   function add(e) {
     e.preventDefault();
     const name = input.current.value.trim();
     if (!name) return;
-    if (categories.some((c) => c.name.toLowerCase() === name.toLowerCase())) { setError('That category already exists.'); return; }
+    if (categories.some((c) => c.name.toLowerCase() === name.toLowerCase())) {
+      setError('That category already exists.');
+      return;
+    }
     setError('');
     const fd = new FormData();
     fd.set('name', name);
-    startTransition(async () => {
+    run(async () => {
       const r = await saveRowAction('categories', null, {}, fd);
-      if (!r.ok) { setError(r.errors?.name || r.error); return; }
-      input.current.value = '';
-      router.refresh();
-      setToast('Category added.');
-    });
+      if (r.errors) return { ok: false, error: r.errors.name };
+      if (r.ok) input.current.value = '';
+      return r;
+    }, 'Category added.');
   }
 
   function remove(c) {
     if (!confirm(`Remove the category "${c.name}"? Its projects stay, without a category.`)) return;
-    startTransition(async () => { await deleteRowAction('categories', c.id); router.refresh(); setToast('Category removed.'); });
+    run(() => deleteRowAction('categories', c.id), 'Category removed.');
   }
 
   return (
@@ -44,16 +43,18 @@ export default function CategoryChips({ categories }) {
         {categories.map((c) => (
           <span className="chip" key={c.id}>
             {c.name}
-            <button type="button" aria-label={`Remove ${c.name}`} disabled={busy} onClick={() => remove(c)}><i className="fa-solid fa-xmark" aria-hidden="true" /></button>
+            <button type="button" aria-label={`Remove ${c.name}`} disabled={busy} onClick={() => remove(c)}>
+              <i className="fa-solid fa-xmark" aria-hidden="true" />
+            </button>
           </span>
         ))}
         <form className="chip-add" onSubmit={add}>
-          <input ref={input} placeholder="New category" aria-label="New category" />
+          <input ref={input} placeholder="New category" aria-label="New category" maxLength={40} />
           <button className="btn btn-line btn-sm" disabled={busy}>Add</button>
         </form>
       </div>
       {error && <span className="field-error">{error}</span>}
-      <Toast message={toast} onDone={clearToast} />
+      <Toast toast={toast} onDone={clearToast} />
     </div>
   );
 }

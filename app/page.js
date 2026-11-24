@@ -1,4 +1,5 @@
 import { getSiteContent } from '@/lib/site-content';
+import { plainText } from '@/lib/format';
 import Portfolio from '@/components/site/Portfolio';
 import Intro from '@/components/site/Intro';
 import HeroArt from '@/components/site/HeroArt';
@@ -12,7 +13,12 @@ import ContactPanel from '@/components/site/ContactPanel';
 
 export async function generateMetadata() {
   const { settings } = await getSiteContent();
-  return { title: settings.site_title };
+  const description = plainText(settings.role_line) || undefined;
+  return {
+    title: settings.site_title,
+    description,
+    openGraph: { title: settings.site_title, description, type: 'website' },
+  };
 }
 
 export default async function Home() {

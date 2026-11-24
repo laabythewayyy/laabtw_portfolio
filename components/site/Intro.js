@@ -1,5 +1,6 @@
 import RichText from './RichText';
 import { SECTIONS } from './sections';
+import CvButton from './CvButton';
 
 /** Left side of the homepage. When a section opens, CSS turns this into the top bar. */
 export default function Intro({ settings, cvUrl, heroLinks }) {
@@ -24,9 +25,7 @@ export default function Intro({ settings, cvUrl, heroLinks }) {
         <a className="btn btn-red" href="#projects" data-s="projects">
           View my projects
         </a>
-        <a className="btn btn-line" href={cvUrl} target="_blank" rel="noopener">
-          <i className="fa-regular fa-file-lines" aria-hidden="true"></i>Download CV
-        </a>
+        <CvButton href={cvUrl} />
       </div>
       {heroLinks.length > 0 && (
         <div className="socials">

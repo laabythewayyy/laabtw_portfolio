@@ -2,17 +2,17 @@
 
 import { useEffect } from 'react';
 
-/** Small confirmation at the bottom of the screen. Disappears after 2.5s. */
-export default function Toast({ message, onDone }) {
+/** Small message at the bottom of the screen. `toast` = { text, error } or null. Success hides after 2.5s, errors after 5s. */
+export default function Toast({ toast, onDone }) {
   useEffect(() => {
-    if (!message) return;
-    const t = setTimeout(onDone, 2500);
+    if (!toast) return;
+    const t = setTimeout(onDone, toast.error ? 5000 : 2500);
     return () => clearTimeout(t);
-  }, [message, onDone]);
-  if (!message) return null;
+  }, [toast, onDone]);
+  if (!toast) return null;
   return (
-    <div className="toast" role="status">
-      {message}
+    <div className={`toast${toast.error ? ' error' : ''}`} role={toast.error ? 'alert' : 'status'}>
+      {toast.text}
     </div>
   );
 }

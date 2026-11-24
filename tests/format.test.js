@@ -22,3 +22,11 @@ describe('renderBold', () => {
     expect(renderBold(null)).toBe('');
   });
 });
+
+describe('plainText', () => {
+  test('drops the ** bold markers and trims', async () => {
+    const { plainText } = await import('@/lib/format');
+    expect(plainText("  I'm a **junior front-end developer** from Cambodia. ")).toBe("I'm a junior front-end developer from Cambodia.");
+    expect(plainText(null)).toBe('');
+  });
+});

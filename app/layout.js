@@ -5,6 +5,8 @@ import './globals.css';
 const barlow = Barlow({ subsets: ['latin'], weight: ['400', '500', '600'], variable: '--font-barlow' });
 const barlowSc = Barlow_Semi_Condensed({ subsets: ['latin'], weight: ['600', '700'], variable: '--font-barlow-sc' });
 
+export const viewport = { themeColor: '#000000', colorScheme: 'dark' };
+
 export const metadata = {
   title: 'Tola Sann',
   icons: { icon: '/favicon.png' },

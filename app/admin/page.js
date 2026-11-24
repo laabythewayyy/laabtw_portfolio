@@ -1,19 +1,14 @@
 import Link from 'next/link';
 import { createClient } from '@/lib/supabase/server';
+import { ADMIN_NAV, ADMIN_SECTIONS } from '@/lib/admin/schema';
 
-const TABLES = [
-  { table: 'skills', label: 'Skills', href: '/admin/skills' },
-  { table: 'resume_entries', label: 'Resume entries', href: '/admin/resume' },
-  { table: 'build_items', label: 'What I build', href: '/admin/build' },
-  { table: 'projects', label: 'Projects', href: '/admin/projects' },
-  { table: 'contacts', label: 'Contacts', href: '/admin/contacts' },
-];
-
+/** Overview: one card per part of the site, with how many items each list has. */
 export default async function AdminHome() {
   const supabase = await createClient();
+  const lists = ADMIN_NAV.filter((n) => n.section);
   const counts = await Promise.all(
-    TABLES.map(async (t) => {
-      const { count } = await supabase.from(t.table).select('*', { count: 'exact', head: true });
+    lists.map(async (n) => {
+      const { count } = await supabase.from(ADMIN_SECTIONS[n.section].table).select('*', { count: 'exact', head: true });
       return count ?? 0;
     }),
   );
@@ -33,10 +28,10 @@ export default async function AdminHome() {
           <b>✎</b>
           <span>Site text</span>
         </Link>
-        {TABLES.map((t, i) => (
-          <Link key={t.table} className="adm-stat" href={t.href}>
+        {lists.map((n, i) => (
+          <Link key={n.href} className="adm-stat" href={n.href}>
             <b>{counts[i]}</b>
-            <span>{t.label}</span>
+            <span>{n.label}</span>
           </Link>
         ))}
       </div>

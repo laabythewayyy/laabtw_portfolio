@@ -3,16 +3,7 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { signOut } from '@/app/login/actions';
-
-const LINKS = [
-  { href: '/admin', label: 'Overview' },
-  { href: '/admin/site', label: 'Site text' },
-  { href: '/admin/skills', label: 'Skills' },
-  { href: '/admin/resume', label: 'Resume' },
-  { href: '/admin/build', label: 'What I build' },
-  { href: '/admin/projects', label: 'Projects' },
-  { href: '/admin/contacts', label: 'Contacts' },
-];
+import { ADMIN_NAV } from '@/lib/admin/schema';
 
 export default function Sidebar() {
   const path = usePathname();
@@ -21,8 +12,8 @@ export default function Sidebar() {
       <div className="adm-brand">
         TOLA <span>SANN</span>
       </div>
-      {LINKS.map((l) => (
-        <Link key={l.href} href={l.href} className={path === l.href ? 'on' : undefined}>
+      {ADMIN_NAV.map((l) => (
+        <Link key={l.href} href={l.href} className={path === l.href ? 'on' : undefined} aria-current={path === l.href ? 'page' : undefined}>
           {l.label}
         </Link>
       ))}

@@ -1,29 +1,54 @@
 'use client';
 
-import { useCallback, useEffect, useRef, useState, useTransition } from 'react';
-import { useRouter } from 'next/navigation';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import Sortable from 'sortablejs';
 import { ADMIN_SECTIONS } from '@/lib/admin/schema';
+import { ORDER_SAVED, SAVED } from '@/lib/admin/messages';
 import { reorderAction, setVisibleAction } from '@/app/admin/actions';
+import { useAdminAction } from './useAdminAction';
 import Editor from './Editor';
 import Toast from './Toast';
+import Toggle from './Toggle';
 
-const SAVED = 'Changes saved. Your site is updated.';
-const KIND_ICON = { education: 'fa-solid fa-graduation-cap', work: 'fa-solid fa-briefcase', achievement: 'fa-solid fa-trophy' };
-
-function Thumb({ section, row }) {
-  const def = ADMIN_SECTIONS[section];
+function Thumb({ def, row }) {
   const img = def.rowImage?.(row);
   // eslint-disable-next-line @next/next/no-img-element -- uploaded image
-  if (img) return <div className="thumb"><img src={img} alt="" /></div>;
-  const icon = def.rowIcon?.(row) || KIND_ICON[row.kind] || (section === 'skills' ? 'fa-solid fa-chart-simple' : section === 'projects' ? 'fa-regular fa-image' : 'fa-solid fa-tag');
-  return <div className="thumb"><i className={icon} aria-hidden="true" /></div>;
+  if (img) return <div className="thumb"><img src={img} alt="" loading="lazy" /></div>;
+  return <div className="thumb"><i className={def.rowIcon?.(row) || def.icon} aria-hidden="true" /></div>;
 }
 
-/** One group of rows that can be reordered by dragging the ⠿ handle. */
-function Group({ section, rows, openId, setOpenId, categories, onSaved, onReorder, run, busy }) {
+function Row({ def, row, open, onToggleOpen, onVisible, busy, editor }) {
+  const meta = def.rowMeta?.(row);
+  const bar = def.rowBar?.(row);
+  return (
+    <div data-id={row.id} className={`item${row.is_visible ? '' : ' hidden'}${open ? ' open' : ''}`}>
+      <div className="row">
+        <div className="handle" title="Drag to reorder" aria-label="Drag to reorder">
+          <i className="fa-solid fa-grip-vertical" aria-hidden="true" />
+        </div>
+        <Thumb def={def} row={row} />
+        <div className="row-text">
+          <div className="title">
+            {def.rowTitle(row)}
+            {bar != null && meta && <span className="meta"> · {meta}</span>}
+          </div>
+          {bar != null ? (
+            <div className="mini-bar"><i style={{ width: `${bar}%` }} /></div>
+          ) : (
+            meta && <div className="meta">{meta}</div>
+          )}
+        </div>
+        <Toggle on={row.is_visible} disabled={busy} onLabel="Visible" offLabel="Hidden" onClick={onVisible} />
+        <button type="button" className="edit" onClick={onToggleOpen} aria-expanded={open}>Edit</button>
+      </div>
+      {open && editor}
+    </div>
+  );
+}
+
+/** One group of rows that can be reordered by dragging the handle. */
+function Group({ rows, onReorder, children }) {
   const box = useRef(null);
-  const def = ADMIN_SECTIONS[section];
 
   useEffect(() => {
     const s = Sortable.create(box.current, {
@@ -45,50 +70,15 @@ function Group({ section, rows, openId, setOpenId, categories, onSaved, onReorde
     return () => s.destroy();
   }, [onReorder]);
 
-  return (
-    <div className="rows" ref={box}>
-      {rows.map((r) => {
-        const open = openId === r.id;
-        return (
-          <div key={r.id} data-id={r.id} className={`item${r.is_visible ? '' : ' hidden'}${open ? ' open' : ''}`}>
-            <div className="row">
-              <div className="handle" title="Drag to reorder" aria-label="Drag to reorder"><i className="fa-solid fa-grip-vertical" aria-hidden="true" /></div>
-              <Thumb section={section} row={r} />
-              <div className="row-text">
-                <div className="title">
-                  {def.rowTitle(r)}
-                  {section === 'skills' && <span className="meta"> · {r.percent}%</span>}
-                </div>
-                {section === 'skills' ? (
-                  <div className="mini-bar"><i style={{ width: `${r.percent}%` }} /></div>
-                ) : (
-                  def.rowMeta?.(r) && <div className="meta">{def.rowMeta(r)}</div>
-                )}
-              </div>
-              <button type="button" className={`toggle${r.is_visible ? ' on' : ''}`} disabled={busy} aria-pressed={r.is_visible}
-                onClick={() => run(() => setVisibleAction(section, r.id, !r.is_visible), r.is_visible ? 'Hidden from your site.' : 'Shown on your site.')}>
-                <i aria-hidden="true" />
-                <span>{r.is_visible ? 'Visible' : 'Hidden'}</span>
-              </button>
-              <button type="button" className="edit" onClick={() => setOpenId(open ? null : r.id)} aria-expanded={open}>Edit</button>
-            </div>
-            {open && (
-              <Editor section={section} row={r} categories={categories} onClose={() => setOpenId(null)} onSaved={onSaved} />
-            )}
-          </div>
-        );
-      })}
-    </div>
-  );
+  return <div className="rows" ref={box}>{rows.map(children)}</div>;
 }
 
 /** A section's rows (grouped when the schema says so) with drag-to-reorder, visibility switch and inline editors. */
 export default function RowList({ section, rows, categories }) {
   const def = ADMIN_SECTIONS[section];
-  const router = useRouter();
+  const { run, busy, toast, notify, clearToast } = useAdminAction();
   const [openId, setOpenId] = useState(null); // a row id, 'new', or null
-  const [toast, setToast] = useState('');
-  const [busy, startTransition] = useTransition();
+
   // a dragged order is shown immediately, until the server's fresh list (with the same ids) arrives
   const signature = rows.map((r) => `${r.id}:${r.sort_order}`).join(',');
   const [dragged, setDragged] = useState({ signature: '', ids: [] });
@@ -96,23 +86,26 @@ export default function RowList({ section, rows, categories }) {
     ? [...rows].sort((a, b) => dragged.ids.indexOf(a.id) - dragged.ids.indexOf(b.id))
     : rows;
 
-  const run = (fn, msg = SAVED) => startTransition(async () => { await fn(); router.refresh(); setToast(msg); });
-  const onSaved = useCallback((msg) => { setOpenId(null); router.refresh(); setToast(typeof msg === 'string' ? msg : SAVED); }, [router]);
-  const clearToast = useCallback(() => setToast(''), []);
+  const onSaved = useCallback((msg) => { setOpenId(null); notify(typeof msg === 'string' ? msg : SAVED); }, [notify]);
 
   const onReorder = useCallback((groupIds) => {
     setDragged((d) => {
       const base = d.signature === signature ? d.ids : rows.map((r) => r.id);
-      const set = new Set(groupIds);
+      const inGroup = new Set(groupIds);
       const queue = [...groupIds];
-      return { signature, ids: base.map((id) => (set.has(id) ? queue.shift() : id)) };
+      return { signature, ids: base.map((id) => (inGroup.has(id) ? queue.shift() : id)) };
     });
-    startTransition(async () => { await reorderAction(section, groupIds); router.refresh(); setToast('Order saved. Your site is updated.'); });
-  }, [rows, signature, section, router]);
+    // if saving fails, drop the optimistic order so the list shows what is really saved
+    run(() => reorderAction(section, groupIds), ORDER_SAVED, () => setDragged({ signature: '', ids: [] }));
+  }, [rows, signature, section, run]);
 
   const groups = def.groupBy
     ? def.groups.map((g) => ({ ...g, rows: ordered.filter((r) => r[def.groupBy] === g.value) }))
     : [{ value: 'all', label: null, rows: ordered }];
+
+  const editorFor = (row) => (
+    <Editor section={section} row={row} categories={categories} onClose={() => setOpenId(null)} onSaved={onSaved} />
+  );
 
   return (
     <>
@@ -127,7 +120,7 @@ export default function RowList({ section, rows, categories }) {
       {openId === 'new' && (
         <div className="item open new-item">
           <div className="row"><div className="title">{def.addLabel}</div></div>
-          <Editor section={section} row={null} categories={categories} onClose={() => setOpenId(null)} onSaved={onSaved} />
+          {editorFor(null)}
         </div>
       )}
 
@@ -140,14 +133,20 @@ export default function RowList({ section, rows, categories }) {
             g.rows.length === 0 ? null : (
               <section key={g.value}>
                 {g.label && <h3 className="group-title">{g.label}</h3>}
-                <Group section={section} rows={g.rows} openId={openId} setOpenId={setOpenId} categories={categories}
-                  onSaved={onSaved} onReorder={onReorder} run={run} busy={busy} />
+                <Group rows={g.rows} onReorder={onReorder}>
+                  {(r) => (
+                    <Row key={r.id} def={def} row={r} busy={busy} open={openId === r.id}
+                      onToggleOpen={() => setOpenId(openId === r.id ? null : r.id)}
+                      onVisible={() => run(() => setVisibleAction(section, r.id, !r.is_visible), r.is_visible ? 'Hidden from your site.' : 'Shown on your site.')}
+                      editor={editorFor(r)} />
+                  )}
+                </Group>
               </section>
             ),
           )}
         </>
       )}
-      <Toast message={toast} onDone={clearToast} />
+      <Toast toast={toast} onDone={clearToast} />
     </>
   );
 }

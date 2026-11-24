@@ -8,7 +8,7 @@ export default function HeroArt({ avatarUrl, openToWork }) {
         <span className="ring"></span>
         <div className="frame">
           {/* eslint-disable-next-line @next/next/no-img-element -- avatar may be an uploaded Supabase URL */}
-          <img src={avatarUrl} alt="" />
+          <img src={avatarUrl} alt="" fetchPriority="high" decoding="async" />
         </div>
       </div>
       {openToWork && (

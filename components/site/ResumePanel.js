@@ -1,4 +1,4 @@
-import SectionHead from './SectionHead';
+import Panel from './Panel';
 
 function Group({ title, entries }) {
   if (entries.length === 0) return null;
@@ -31,8 +31,7 @@ export default function ResumePanel({ settings, resume, resumeEmpty }) {
   const head = settings.section_headers.resume;
   const left = resume.education.length + resume.work.length > 0;
   return (
-    <section className="panel" id="p-resume" aria-labelledby="t-resume">
-      <SectionHead id="t-resume" label={head.label} heading={head.heading} />
+    <Panel id="resume" head={head}>
       {resumeEmpty ? (
         <p className="resume-empty">Resume coming soon.</p>
       ) : (
@@ -50,6 +49,6 @@ export default function ResumePanel({ settings, resume, resumeEmpty }) {
           )}
         </div>
       )}
-    </section>
+    </Panel>
   );
 }

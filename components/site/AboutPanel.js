@@ -1,17 +1,17 @@
-import SectionHead from './SectionHead';
+import Panel from './Panel';
 import BlockTitle from './BlockTitle';
 import RichText from './RichText';
+import CvButton from './CvButton';
 
 /** About: avatar card, title, text, info list, CV button, then the skill bars (they fill when the section opens). */
 export default function AboutPanel({ settings, avatarUrl, cvUrl, skills }) {
   const head = settings.section_headers.about;
   return (
-    <section className="panel" id="p-about" aria-labelledby="t-about">
-      <SectionHead id="t-about" label={head.label} heading={head.heading} />
+    <Panel id="about" head={head}>
       <div className="about">
         <div className="pic">
           {/* eslint-disable-next-line @next/next/no-img-element -- avatar may be an uploaded Supabase URL */}
-          <img src={avatarUrl} alt={`${settings.first_name} ${settings.last_name}'s avatar`} />
+          <img src={avatarUrl} alt={`${settings.first_name} ${settings.last_name}'s avatar`} loading="lazy" decoding="async" />
         </div>
         <div>
           {settings.about_title && <h3>{settings.about_title}</h3>}
@@ -28,10 +28,8 @@ export default function AboutPanel({ settings, avatarUrl, cvUrl, skills }) {
             </ul>
           )}
           {settings.about_body_2 && <RichText text={settings.about_body_2} />}
-          <div className="cta" style={{ marginTop: 26 }}>
-            <a className="btn btn-red" href={cvUrl} target="_blank" rel="noopener">
-              <i className="fa-regular fa-file-lines" aria-hidden="true"></i>Download CV
-            </a>
+          <div className="cta about-cta">
+            <CvButton href={cvUrl} variant="red" />
           </div>
         </div>
       </div>
@@ -54,6 +52,6 @@ export default function AboutPanel({ settings, avatarUrl, cvUrl, skills }) {
           </div>
         </>
       )}
-    </section>
+    </Panel>
   );
 }

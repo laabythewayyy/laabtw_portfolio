@@ -12,25 +12,29 @@ export default function Cursor() {
     const cur = ref.current;
     const still = matchMedia('(prefers-reduced-motion: reduce)').matches;
     document.documentElement.classList.add('custom-cursor');
-    let tx = -100, ty = -100, cx = -100, cy = -100, raf;
+    let tx = -100, ty = -100, cx = -100, cy = -100, raf = 0;
 
-    const move = (e) => { tx = e.clientX; ty = e.clientY; cur.classList.add('on'); };
-    const leave = () => cur.classList.remove('on');
-    const down = () => cur.classList.add('down');
-    const up = () => cur.classList.remove('down');
+    // eases towards the mouse, and stops animating once it has caught up (no work while the mouse is still)
     const follow = () => {
       cx += (tx - cx) * (still ? 1 : 0.35);
       cy += (ty - cy) * (still ? 1 : 0.35);
-      cur.style.left = cx + 'px';
-      cur.style.top = cy + 'px';
-      raf = requestAnimationFrame(follow);
+      if (Math.abs(tx - cx) < 0.1 && Math.abs(ty - cy) < 0.1) { cx = tx; cy = ty; }
+      cur.style.transform = `translate3d(${cx}px, ${cy}px, 0) translate(-50%, -50%)`; // GPU move, no layout
+      raf = cx === tx && cy === ty ? 0 : requestAnimationFrame(follow);
     };
+    const move = (e) => {
+      tx = e.clientX; ty = e.clientY;
+      cur.classList.add('on');
+      if (!raf) raf = requestAnimationFrame(follow);
+    };
+    const leave = () => cur.classList.remove('on');
+    const down = () => cur.classList.add('down');
+    const up = () => cur.classList.remove('down');
 
     window.addEventListener('mousemove', move);
     document.addEventListener('mouseleave', leave);
     window.addEventListener('mousedown', down);
     window.addEventListener('mouseup', up);
-    raf = requestAnimationFrame(follow);
     return () => {
       cancelAnimationFrame(raf);
       window.removeEventListener('mousemove', move);

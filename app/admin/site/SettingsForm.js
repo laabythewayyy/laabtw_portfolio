@@ -6,6 +6,8 @@ import { saveSettings } from './actions';
 import { renderBold } from '@/lib/format';
 import DropZone from '@/components/admin/DropZone';
 import Toast from '@/components/admin/Toast';
+import Toggle from '@/components/admin/Toggle';
+import { SAVED } from '@/lib/admin/messages';
 
 const TABS = [
   ['home', 'Home'],
@@ -66,7 +68,7 @@ function FactsEditor({ initial, onChange }) {
           </div>
         ))}
       </div>
-      <button type="button" className="btn btn-line btn-sm" style={{ justifySelf: 'start', marginTop: 4 }}
+      <button type="button" className="btn btn-line btn-sm add-line"
         onClick={() => update([...facts, { label: '', value: '', k: ++factKey }])}>
         <i className="fa-solid fa-plus" aria-hidden="true" /> Add line
       </button>
@@ -117,9 +119,7 @@ function Fields({ s, onDirty, onSaved }) {
           <div className="switch-row">
             <div><b>&quot;Open to work&quot; badge</b><div className="hint">Shows under your avatar on the homepage.</div></div>
             <input type="hidden" name="open_to_work" value={open ? 'on' : ''} />
-            <button type="button" className={`toggle${open ? ' on' : ''}`} aria-pressed={open} onClick={() => { setOpen((x) => !x); onDirty(); }}>
-              <i aria-hidden="true" /><span>{open ? 'On' : 'Off'}</span>
-            </button>
+            <Toggle on={open} label='"Open to work" badge' onClick={() => { setOpen((x) => !x); onDirty(); }} />
           </div>
         </div>
       </div>
@@ -177,7 +177,7 @@ function Fields({ s, onDirty, onSaved }) {
         </div>
       </div>
 
-      {state?.error && <p className="form-error">{state.error}</p>}
+      {state?.error && <p className="form-error" role="alert">{state.error}</p>}
       <UnsavedBar pending={pending} />
     </form>
   );
@@ -199,18 +199,26 @@ function UnsavedBar({ pending }) {
 export default function SettingsForm({ settings }) {
   const [dirty, setDirty] = useState(false);
   const [version, setVersion] = useState(0);
-  const [toast, setToast] = useState('');
+  const [toast, setToast] = useState(null);
   const onDirty = useCallback(() => setDirty(true), []);
-  const onSaved = useCallback(() => { setDirty(false); setToast('Changes saved. Your site is updated.'); }, []);
-  const clearToast = useCallback(() => setToast(''), []);
+  const onSaved = useCallback(() => { setDirty(false); setToast({ text: SAVED }); }, []);
+  const clearToast = useCallback(() => setToast(null), []);
+
+  // closing the tab or reloading with unsaved edits asks first
+  useEffect(() => {
+    if (!dirty) return;
+    const warn = (e) => e.preventDefault();
+    window.addEventListener('beforeunload', warn);
+    return () => window.removeEventListener('beforeunload', warn);
+  }, [dirty]);
 
   return (
     <div className={dirty ? 'is-dirty' : undefined}
       onClick={(e) => {
-        if (e.target.closest('[data-discard]')) { setVersion((v) => v + 1); setDirty(false); setToast('Changes discarded.'); }
+        if (e.target.closest('[data-discard]')) { setVersion((v) => v + 1); setDirty(false); setToast({ text: 'Changes discarded.' }); }
       }}>
       <Fields key={version} s={settings} onDirty={onDirty} onSaved={onSaved} />
-      <Toast message={toast} onDone={clearToast} />
+      <Toast toast={toast} onDone={clearToast} />
     </div>
   );
 }

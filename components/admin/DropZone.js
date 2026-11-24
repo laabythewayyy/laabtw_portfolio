@@ -1,6 +1,6 @@
 'use client';
 
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 /**
  * Upload box: drag a file onto it or click to choose. Shows the new image (or file name) straight away.
@@ -12,6 +12,9 @@ export default function DropZone({ fileName, urlName, removeName, current, kind 
   const [name, setName] = useState('');
   const [over, setOver] = useState(false);
   const accept = kind === 'pdf' ? 'application/pdf' : 'image/jpeg,image/png,image/webp';
+
+  // free the in-memory preview when it is replaced or the box closes
+  useEffect(() => () => { if (preview.startsWith('blob:')) URL.revokeObjectURL(preview); }, [preview]);
 
   function take(file) {
     if (!file) return;

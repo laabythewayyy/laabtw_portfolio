@@ -1,4 +1,4 @@
-import SectionHead from './SectionHead';
+import Panel from './Panel';
 import BlockTitle from './BlockTitle';
 import ProjectSlider from './ProjectSlider';
 
@@ -6,8 +6,7 @@ import ProjectSlider from './ProjectSlider';
 export default function ProjectsPanel({ settings, build, projects, filters }) {
   const head = settings.section_headers.projects;
   return (
-    <section className="panel" id="p-projects" aria-labelledby="t-projects">
-      <SectionHead id="t-projects" label={head.label} heading={head.heading} />
+    <Panel id="projects" head={head}>
 
       {build.length > 0 && (
         <>
@@ -38,6 +37,6 @@ export default function ProjectsPanel({ settings, build, projects, filters }) {
           <ProjectSlider projects={projects} filters={filters} />
         </>
       )}
-    </section>
+    </Panel>
   );
 }

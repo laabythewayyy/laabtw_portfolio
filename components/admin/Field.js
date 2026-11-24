@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { ICONS } from '@/lib/admin/icons';
 import DropZone from './DropZone';
+import Toggle from './Toggle';
 
 function Label({ field, extra }) {
   return (
@@ -112,7 +113,7 @@ function IconPicker({ field, value, err }) {
               <span>{n.split(' ')[0]}</span>
             </button>
           ))}
-          {shown.length === 0 && <p className="hint" style={{ gridColumn: '1/-1' }}>No icon found. Try another word.</p>}
+          {shown.length === 0 && <p className="hint icons-empty">No icon found. Try another word.</p>}
         </div>
       </div>
       {err}
@@ -126,10 +127,7 @@ function Switch({ field, value }) {
     <div className="switch-row">
       <b>{field.label}</b>
       <input type="hidden" name={field.name} value={on ? 'on' : ''} />
-      <button type="button" className={`toggle${on ? ' on' : ''}`} aria-pressed={on} onClick={() => setOn((x) => !x)}>
-        <i aria-hidden="true" />
-        <span>{on ? 'On' : 'Off'}</span>
-      </button>
+      <Toggle on={on} label={field.label} onClick={() => setOn((x) => !x)} />
     </div>
   );
 }

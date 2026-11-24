@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useRef } from 'react';
-import { boltPath } from '@/lib/lightning/bolt';
+import { boltPath, strokeBolt } from '@/lib/lightning/bolt';
 
 /** One lightning strike onto the title when the login page loads (none under reduced motion). */
 export default function LoginStrike({ targetId }) {
@@ -25,13 +25,7 @@ export default function LoginStrike({ targetId }) {
       const k = 1 - (now - born) / life;
       ctx.clearRect(0, 0, innerWidth, innerHeight);
       if (k <= 0) return;
-      ctx.lineCap = 'round'; ctx.lineJoin = 'round'; ctx.shadowColor = '#ffb300';
-      for (const [w, col, blur] of [[9, `rgba(255,170,0,${k * 0.35})`, 28], [3, `rgba(255,248,220,${k})`, 12]]) {
-        ctx.beginPath();
-        ctx.moveTo(pts[0][0], pts[0][1]);
-        for (const p of pts) ctx.lineTo(p[0], p[1]);
-        ctx.lineWidth = w; ctx.strokeStyle = col; ctx.shadowBlur = blur; ctx.stroke();
-      }
+      strokeBolt(ctx, pts, k, 3);
       raf = requestAnimationFrame(draw);
     };
     const start = setTimeout(() => { raf = requestAnimationFrame(draw); }, 300);
