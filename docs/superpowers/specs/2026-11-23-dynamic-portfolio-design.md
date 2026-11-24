@@ -45,7 +45,7 @@ At the same time the public site gets a **new look**: a Flash-inspired black-and
 - Tailwind CSS v4.
 - Free tiers only: Vercel Hobby and Supabase Free. Supabase Free pauses a project after about a week with no activity, which is acceptable.
 - The owner has MySQL locally, but it is **not** used. Supabase is hosted.
-- No real photos of the owner anywhere. The site uses the 3D avatar (`img_file/avatartola.png`).
+- No real photos of the owner anywhere. The site uses the 3D avatar (`public/avatartola.png`).
 
 ## Approaches considered
 
@@ -122,7 +122,7 @@ Section headers are a small grey uppercase label with a 120px glowing red line, 
 | Gold | `#ffb300` | every hover, lightning glow |
 | White / Grey | `#ffffff` / `#a3a3a3` | text |
 
-- **Background:** the owner's contour SVG (`img_file/hero-contour.svg`) recoloured red, over black with a soft red glow on the right. A gold copy lights up locally where lightning lands.
+- **Background:** the owner's contour SVG recoloured red (`public/contour-red.svg`), over black with a soft red glow on the right. A gold copy lights up locally where lightning lands.
 - **Type:** Barlow Semi Condensed 700 for headings, Barlow for text. The homepage description has +3px line spacing and 1px letter spacing.
 - **Corners:** everything inside the section panels is square (border-radius 0). The homepage buttons stay slightly rounded (6px). Icons, social icons and timeline dots stay round.
 - **Avatar:** no background behind it. On the homepage it sits in a circle with a 5px glowing red neon border, head inside the circle. In About it sits in a plain card.
@@ -228,7 +228,7 @@ The dashboard is a private tool for one person. It uses the public site's identi
 ## Repo and deployment
 
 - Before anything is replaced, the current static version is tagged `static-v1` so it stays easy to recover.
-- The Next.js app replaces the static files at the root of this repo. `mockups/demo-v7.html` and its two SVGs stay in the repo as the design reference.
+- The Next.js app replaces the static files at the root of this repo. `mockups/demo-v7.html` and `mockups/dashboard-demo.html` stay in the repo as the design reference (they use the SVGs in `public/`). The old static-site images (`img_file/`) were removed; they are still in the `static-v1` tag.
 - Secrets go in `.env.local`, which is git-ignored: the Supabase URL, the anon key, and the admin user id. The same values are set in Vercel project settings.
 - Database schema, RLS policies and the seed live as SQL files in `supabase/` so the setup is reproducible.
 - The owner creates the Supabase and Vercel accounts (they need the owner's sign-in). The plan must include step-by-step instructions for that part.

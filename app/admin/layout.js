@@ -2,6 +2,7 @@ import { Suspense } from 'react';
 import { connection } from 'next/server';
 import { requireAdmin } from '@/lib/supabase/server';
 import Sidebar from '@/components/admin/Sidebar';
+import Loading from './loading';
 import './admin.css';
 
 export const metadata = { title: 'Dashboard · Tola Sann', robots: { index: false } };
@@ -21,7 +22,7 @@ export default function AdminLayout({ children }) {
         <Sidebar />
       </Suspense>
       <main className="adm-main">
-        <Suspense fallback={<p className="hint">Loading…</p>}>
+        <Suspense fallback={<Loading />}>
           <Guard>{children}</Guard>
         </Suspense>
       </main>

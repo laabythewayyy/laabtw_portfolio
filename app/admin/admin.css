@@ -40,6 +40,10 @@ button:disabled{opacity:.55;cursor:default}
 .head h1{font-size:40px}
 .sub{color:var(--grey);margin-top:4px}
 
+.adm-loading{display:flex;align-items:center;gap:12px;color:var(--grey);padding:40px 0}
+.adm-spinner{width:18px;height:18px;border:2px solid var(--line);border-top-color:var(--red-hot);border-radius:50%;animation:spin .8s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+
 /* overview */
 .adm-stats{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:14px}
 .adm-stat{border:1px solid var(--line);background:var(--carbon);padding:20px;transition:border-color .2s ease}
@@ -184,4 +188,4 @@ button:disabled{opacity:.55;cursor:default}
   .actions .del{margin-left:0}
   .unsaved{flex-direction:column;align-items:stretch}
 }
-@media (prefers-reduced-motion:reduce){.editor-inner,.tab.on,.toast{animation:none}.unsaved{transition:none}}
+@media (prefers-reduced-motion:reduce){.adm-spinner,.editor-inner,.tab.on,.toast{animation:none}.unsaved{transition:none}}
