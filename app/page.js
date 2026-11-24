@@ -8,6 +8,7 @@ import Cursor from '@/components/site/Cursor';
 import Lightning from '@/components/site/Lightning';
 import AboutPanel from '@/components/site/AboutPanel';
 import ResumePanel from '@/components/site/ResumePanel';
+import ProjectsPanel from '@/components/site/ProjectsPanel';
 
 export async function generateMetadata() {
   const { settings } = await getSiteContent();
@@ -31,7 +32,7 @@ export default async function Home() {
         {/* Section panels: filled in Tasks 5–7 */}
         <AboutPanel settings={settings} avatarUrl={content.avatarUrl} cvUrl={content.cvUrl} skills={content.skills} />
         <ResumePanel settings={settings} resume={content.resume} resumeEmpty={content.resumeEmpty} />
-        <section className="panel" id="p-projects" aria-labelledby="t-projects">{head('projects')}</section>
+        <ProjectsPanel settings={settings} build={content.build} projects={content.projects} filters={content.filters} />
         <section className="panel" id="p-contact" aria-labelledby="t-contact">{head('contact')}</section>
       </Portfolio>
       <PhoneMenu />
