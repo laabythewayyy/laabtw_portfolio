@@ -1,4 +1,5 @@
 import { Suspense } from 'react';
+import { connection } from 'next/server';
 import { requireAdmin } from '@/lib/supabase/server';
 import Sidebar from '@/components/admin/Sidebar';
 import './admin.css';
@@ -7,6 +8,7 @@ export const metadata = { title: 'Dashboard · Tola Sann', robots: { index: fals
 
 /** Checks the admin on every request (reads the session cookie, so it can't be prerendered). */
 async function Guard({ children }) {
+  await connection(); // render at request time: the session check reads cookies and the clock
   await requireAdmin();
   return children;
 }
