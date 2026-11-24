@@ -174,15 +174,20 @@ button:disabled{opacity:.55;cursor:default}
   .adm-stats{grid-template-columns:repeat(auto-fill,minmax(220px,1fr))}
 }
 
+/* ---------- dashboard hamburger menu (shares the public site's .menu-btn / #mobile-menu look) ---------- */
+#mobile-menu.compact li{padding:9px}
+#mobile-menu.compact .mobile-link{font-size:clamp(22px,6.5vw,28px)}
+#mobile-menu .mobile-link.on{color:var(--red-hot)}
+#mobile-menu button.mobile-link{background:none;border:0;font-family:inherit;cursor:pointer}
+#mobile-menu.compact .menu-sep{width:60px;height:1px;background:var(--red);margin:12px auto;padding:0}
+
 /* ---------- phones ---------- */
 @media (max-width:820px){
   .adm{grid-template-columns:1fr}
-  .adm-side{position:sticky;top:0;z-index:6;height:auto;flex-direction:row;flex-wrap:nowrap;overflow-x:auto;align-items:center;gap:2px;padding:12px 14px;scrollbar-width:none}
-  .adm-side::-webkit-scrollbar{display:none}
-  .adm-brand{margin:0 12px 0 4px;font-size:20px;white-space:nowrap}
-  .adm-side a,.adm-side button{width:auto;white-space:nowrap;border-left:0;border-bottom:2px solid transparent;padding:8px 10px}
-  .adm-side a.on{border-bottom-color:var(--red-hot)}
-  .adm-side .sep{display:none}
+  /* phones: a slim top bar with the name; the links move into the hamburger menu */
+  .adm-side{position:sticky;top:0;z-index:6;height:74px;flex-direction:row;align-items:center;padding:0 16px;border-right:0;border-bottom:1px solid var(--line)}
+  .adm-side > :not(.adm-brand){display:none}
+  .adm-brand{margin:0;font-size:22px}
   .adm-main{padding:22px 16px}
   .head h1{font-size:32px}
   .row{grid-template-columns:30px 1fr auto auto;gap:10px;padding:12px 4px}
