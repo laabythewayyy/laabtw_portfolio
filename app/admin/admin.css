@@ -216,3 +216,5 @@ button:disabled{opacity:.55;cursor:default}
   .unsaved{flex-direction:column;align-items:stretch}
 }
 @media (prefers-reduced-motion:reduce){.adm-spinner,.editor-inner,.tab.on,.toast{animation:none}.unsaved{transition:none}}
+
+.adm-error{max-width:560px;margin-top:20px}

@@ -165,13 +165,13 @@ function Fields({ s, onDirty, onSaved }) {
           <DropZone fileName="about_image__file" removeName="about_image_url__remove" current={s.about_image_url} kind="image" onChange={onDirty}
             removeLabel="Use the homepage avatar instead"
             title={s.about_image_url ? 'Drop a new image here, or click to choose' : 'Using your homepage avatar. Drop a photo here to use a different one'}
-            hint="Shown in the About section only. JPG, PNG or WebP up to 5 MB." />
+            hint="Shown in the About section only. JPG, PNG or WebP. Large photos are made smaller automatically." />
           {err.about_image_url && <span className="field-error">{err.about_image_url}</span>}
         </div>
         <div className="card">
           <h2>CV</h2>
           <DropZone fileName="cv__file" removeName="cv_url__remove" current={s.cv_url} kind="pdf" onChange={onDirty}
-            title={s.cv_url ? 'Your uploaded CV' : 'Default CV (portfolio-tola.pdf)'} hint="Drop a new PDF here, or click to choose. Up to 5 MB." />
+            title={s.cv_url ? 'Your uploaded CV' : 'Default CV (portfolio-tola.pdf)'} hint="Drop a new PDF here, or click to choose. Up to 4 MB." />
           {err.cv_url && <span className="field-error">{err.cv_url}</span>}
         </div>
       </div>

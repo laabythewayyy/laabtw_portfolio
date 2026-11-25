@@ -59,8 +59,9 @@ describe('validate: resume', () => {
 });
 
 describe('validateUpload', () => {
-  test('images over 5 MB are rejected', () => {
-    expect(validateUpload({ size: 6 * 1024 * 1024, type: 'image/png' }, 'image')).toBe('Images must be 5 MB or smaller.');
+  test('images over 4 MB are rejected (hosting caps a request at about 4.5 MB)', () => {
+    expect(validateUpload({ size: 4.5 * 1024 * 1024, type: 'image/png' }, 'image')).toBe('Images must be 4 MB or smaller.');
+    expect(validateUpload({ size: 4.5 * 1024 * 1024, type: 'application/pdf' }, 'pdf')).toBe('Files must be 4 MB or smaller.');
   });
   test('only JPG, PNG and WebP images', () => {
     expect(validateUpload({ size: 1000, type: 'image/gif' }, 'image')).toBe('Upload a JPG, PNG or WebP image.');

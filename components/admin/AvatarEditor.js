@@ -33,7 +33,7 @@ export default function AvatarEditor({ current, zoom: savedZoom, y: savedY, erro
         <DropZone fileName="avatar__file" removeName="avatar_url__remove" current={current} kind="image" onChange={onDirty}
           removeLabel="Use the original cartoon avatar instead"
           title={current ? 'Drop a new image here, or click to choose' : 'Using the original cartoon avatar. Drop an image here to replace it'}
-          hint="A cut-out PNG/WebP (transparent background) works best. JPG photos are framed around the face. Up to 5 MB."
+          hint="A cut-out PNG/WebP (transparent background) works best. JPG photos are framed around the face. Large photos are made smaller automatically."
           onFile={(url, name) => { setPic({ src: url, name }); resetFraming(); }}
           onRemove={(checked) => { setPic(checked ? { src: ORIGINAL, name: ORIGINAL } : { src: current || ORIGINAL, name: current || ORIGINAL }); resetFraming(); }} />
         {error && <span className="field-error">{error}</span>}
