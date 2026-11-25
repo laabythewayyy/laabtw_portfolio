@@ -85,8 +85,7 @@ h1,h2,h3{font-family:var(--font-barlow-sc),sans-serif;font-weight:700;line-heigh
 /* right side: avatar centred vertically, level with the text on the left */
 .hero-art{position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:26px;padding:40px 4vw}
 .portrait{position:relative;width:min(440px,34vw)}
-.frame{position:relative;width:100%;aspect-ratio:1;border-radius:50%;overflow:hidden;
-  background:radial-gradient(circle at 50% 35%,#1d0b0d,#070707 70%)}
+.frame{position:relative;width:100%;aspect-ratio:1;border-radius:50%;overflow:hidden}   /* no fill: the homepage background shows behind a cut-out avatar */
 /* circle border: same glowing thickness as the hexagon outline */
 .ring{position:absolute;left:0;bottom:0;width:100%;aspect-ratio:1;border-radius:50%;border:5px solid var(--red-hot);pointer-events:none;z-index:2;
   box-shadow:0 0 6px var(--red-hot),0 0 18px rgba(208,16,31,.85),inset 0 0 6px var(--red-hot),inset 0 0 14px rgba(208,16,31,.5)}
