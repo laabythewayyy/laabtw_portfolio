@@ -2,6 +2,7 @@ import Panel from './Panel';
 import BlockTitle from './BlockTitle';
 import RichText from './RichText';
 import CvButton from './CvButton';
+import { photoFit } from '@/lib/content';
 
 /** About: photo card (its own upload, or the homepage avatar), title, text, info list, CV button, then the skill bars (they fill when the section opens). */
 export default function AboutPanel({ settings, imageUrl, cvUrl, skills }) {
@@ -9,7 +10,7 @@ export default function AboutPanel({ settings, imageUrl, cvUrl, skills }) {
   return (
     <Panel id="about" head={head}>
       <div className="about">
-        <div className="pic">
+        <div className="pic" data-fit={photoFit(imageUrl)}>
           {/* eslint-disable-next-line @next/next/no-img-element -- avatar may be an uploaded Supabase URL */}
           <img src={imageUrl} alt={`${settings.first_name} ${settings.last_name}`.trim()} loading="lazy" decoding="async" />
         </div>

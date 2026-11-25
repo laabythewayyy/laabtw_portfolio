@@ -105,3 +105,14 @@ describe('about photo', () => {
     expect(shapeContent(empty).aboutImageUrl).toBe('/avatartola.png');
   });
 });
+
+describe('photoFit', () => {
+  test('JPG uploads are photos; PNG/WebP are treated as cut-outs', async () => {
+    const { photoFit } = await import('@/lib/content');
+    expect(photoFit('https://x.supabase.co/media/avatar/123-me.jpg')).toBe('photo');
+    expect(photoFit('https://x/me.JPEG?v=2')).toBe('photo');
+    expect(photoFit('/avatartola.png')).toBe('cutout');
+    expect(photoFit('https://x/me.webp')).toBe('cutout');
+    expect(photoFit('')).toBe('cutout');
+  });
+});

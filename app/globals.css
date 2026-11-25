@@ -85,14 +85,17 @@ h1,h2,h3{font-family:var(--font-barlow-sc),sans-serif;font-weight:700;line-heigh
 /* right side: avatar centred vertically, level with the text on the left */
 .hero-art{position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:26px;padding:40px 4vw}
 .portrait{position:relative;width:min(440px,34vw)}
-.frame{position:relative;width:100%;aspect-ratio:1/1.12;border-radius:0 0 999px 999px;overflow:hidden}
+.frame{position:relative;width:100%;aspect-ratio:1;border-radius:50%;overflow:hidden;
+  background:radial-gradient(circle at 50% 35%,#1d0b0d,#070707 70%)}
 /* circle border: same glowing thickness as the hexagon outline */
 .ring{position:absolute;left:0;bottom:0;width:100%;aspect-ratio:1;border-radius:50%;border:5px solid var(--red-hot);pointer-events:none;z-index:2;
   box-shadow:0 0 6px var(--red-hot),0 0 18px rgba(208,16,31,.85),inset 0 0 6px var(--red-hot),inset 0 0 14px rgba(208,16,31,.5)}
-.frame img{position:absolute;left:50%;bottom:0;width:125%;max-width:none;
-  transform:translate(-50%,16%);filter:drop-shadow(0 20px 40px rgba(0,0,0,.45));
+/* any picture fills the circle; a cut-out (transparent PNG) is zoomed so the figure fills it, a photo keeps the face in view */
+.frame img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:50% 20%;
+  --zoom:1;transform:scale(var(--zoom));transform-origin:50% 20%;
   animation:arrive .9s .1s cubic-bezier(.16,1,.3,1) both}
-@keyframes arrive{from{transform:translate(0%,16%);opacity:0;filter:blur(8px)}to{transform:translate(-50%,16%);opacity:1}}
+.frame[data-fit=cutout] img{--zoom:1.22;transform-origin:50% 12%;object-position:50% 0;filter:drop-shadow(0 20px 40px rgba(0,0,0,.45))}
+@keyframes arrive{from{transform:translateX(22%) scale(var(--zoom));opacity:0;filter:blur(8px)}to{transform:scale(var(--zoom));opacity:1}}
 .badge{position:relative;z-index:3;display:flex;align-items:center;gap:10px;background:rgba(0,0,0,.75);border:1px solid var(--line);
   padding:9px 16px;border-radius:40px;font-size:14px;font-weight:500}
 .badge i{width:9px;height:9px;border-radius:50%;background:#33d17a;box-shadow:0 0 0 4px rgba(51,209,122,.2)}
@@ -127,9 +130,11 @@ body.open .panel.leaving{display:block;position:absolute;left:0;right:0;top:0;an
 .sec-head + .block-title{margin-top:0}
 
 /* about */
-.about{display:grid;grid-template-columns:300px 1fr;gap:48px;align-items:start}
-.about .pic{border-radius:0;overflow:hidden;aspect-ratio:4/5;position:relative}
-.about .pic img{position:absolute;left:50%;bottom:0;height:112%;transform:translate(-50%,16%)}
+/* like the reference: photo in the left third, its top level with the title; any picture fills a 4:5 frame */
+.about{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,2fr);gap:clamp(28px,4vw,56px);align-items:start}
+.about .pic{position:relative;width:100%;max-width:420px;aspect-ratio:4/5;overflow:hidden;background:var(--carbon);border:1px solid var(--line)}
+.about .pic img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:50% 18%}
+.about .pic[data-fit=cutout] img{object-position:50% 0}
 .about h3{font-size:30px;margin-bottom:12px}
 .about p{color:#d4d4d4;line-height:1.65;max-width:62ch}
 .facts{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px 30px;margin:26px 0;list-style:none}
@@ -259,7 +264,7 @@ a.cbox:hover h3{color:var(--gold)}
 .skills{grid-auto-flow:row;grid-template-rows:none}
   .build-item{border-left:0;padding-left:0}
   .build-item+.build-item{border-top:1px solid var(--line)}
-  .about .pic{max-width:280px}
+  .about .pic{max-width:340px;margin:0 auto}   /* phones: photo centred above the text, like the reference */
 }
 /* ===== phone menu: the hamburger + slide-in menu from the old portfolio, recoloured ===== */
 /* just the three lines: no circle, no ping ring */
