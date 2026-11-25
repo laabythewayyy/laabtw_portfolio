@@ -5,8 +5,9 @@ import { useEffect, useRef, useState } from 'react';
 /**
  * Upload box: drag a file onto it or click to choose. Shows the new image (or file name) straight away.
  * The file is sent with the form under `fileName`; the current URL under `urlName`; a "remove" checkbox under `removeName`.
+ * Optional: onFile(previewUrl, fileName) when a file is chosen, onRemove(checked) when the remove box changes.
  */
-export default function DropZone({ fileName, urlName, removeName, removeLabel, current, kind = 'image', title, hint, onChange }) {
+export default function DropZone({ fileName, urlName, removeName, removeLabel, current, kind = 'image', title, hint, onChange, onFile, onRemove }) {
   const input = useRef(null);
   const [preview, setPreview] = useState(kind === 'image' ? current || '' : '');
   const [name, setName] = useState('');
@@ -18,8 +19,10 @@ export default function DropZone({ fileName, urlName, removeName, removeLabel, c
 
   function take(file) {
     if (!file) return;
-    if (kind === 'image') setPreview(URL.createObjectURL(file));
+    const url = kind === 'image' ? URL.createObjectURL(file) : '';
+    if (url) setPreview(url);
     setName(file.name);
+    onFile?.(url, file.name);
     onChange?.();
   }
 
@@ -53,7 +56,7 @@ export default function DropZone({ fileName, urlName, removeName, removeLabel, c
       {urlName && <input type="hidden" name={urlName} value={current ?? ''} />}
       {current && removeName && (
         <label className="check">
-          <input type="checkbox" name={removeName} onChange={() => onChange?.()} /> <span>{removeLabel || (kind === 'pdf' ? 'Use the default CV instead' : 'Remove this image')}</span>
+          <input type="checkbox" name={removeName} onChange={(e) => { onRemove?.(e.target.checked); onChange?.(); }} /> <span>{removeLabel || (kind === 'pdf' ? 'Use the default CV instead' : 'Remove this image')}</span>
         </label>
       )}
     </div>

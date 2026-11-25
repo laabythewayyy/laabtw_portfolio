@@ -145,6 +145,14 @@ button:disabled{opacity:.55;cursor:default}
   background:#0f0f0f;border:1px solid var(--gold);box-shadow:0 -6px 24px rgba(0,0,0,.6);transform:translateY(20px);opacity:0;pointer-events:none;transition:all .25s}
 .is-dirty .unsaved{transform:none;opacity:1;pointer-events:auto}
 
+/* homepage avatar: live circle preview (same component as the homepage) + upload + Zoom / Up-down sliders */
+.avatar-editor{display:grid;grid-template-columns:220px minmax(0,1fr);gap:28px;align-items:start}
+.avatar-preview{display:grid;justify-items:center;gap:10px;padding:10px 0}
+.avatar-preview .portrait{width:200px}
+.avatar-preview .ring{border-width:4px}
+.avatar-controls{display:grid;gap:16px;min-width:0}
+.avatar-auto{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+
 /* ---------- project categories ---------- */
 .cats{margin-top:34px}
 .chips{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
@@ -171,6 +179,7 @@ button:disabled{opacity:.55;cursor:default}
   .tab-home.on{grid-template-columns:minmax(0,1fr) minmax(0,1fr);align-items:start}
   .tab-home .preview{position:sticky;top:24px;order:2}
   .tab-files.on,.tab-heads.on{grid-template-columns:minmax(0,1fr) minmax(0,1fr);align-items:start}
+  .tab-files .card:first-child{grid-column:1/-1}   /* the avatar editor needs the full width */
   .adm-stats{grid-template-columns:repeat(auto-fill,minmax(220px,1fr))}
 }
 
@@ -197,6 +206,7 @@ button:disabled{opacity:.55;cursor:default}
   .tabs::-webkit-scrollbar{display:none}
   .tabs button{white-space:nowrap}
   .two{grid-template-columns:1fr}
+  .avatar-editor{grid-template-columns:1fr}
   .fact{grid-template-columns:30px 1fr 34px;grid-template-areas:"h l x" "h v v";row-gap:6px;padding-bottom:6px;border-bottom:1px solid var(--line)}
   .fact .handle{grid-area:h;align-self:start}
   .fact input:nth-of-type(1){grid-area:l}

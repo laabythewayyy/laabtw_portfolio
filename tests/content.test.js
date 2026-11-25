@@ -116,3 +116,17 @@ describe('photoFit', () => {
     expect(photoFit('')).toBe('cutout');
   });
 });
+
+describe('avatarFrame', () => {
+  test('automatic: cut-outs zoom 1.22, photos 1, both centred (y 0)', async () => {
+    const { avatarFrame } = await import('@/lib/content');
+    expect(avatarFrame('/avatartola.png')).toEqual({ fit: 'cutout', zoom: 1.22, y: 0 });
+    expect(avatarFrame('https://x/me.jpg')).toEqual({ fit: 'photo', zoom: 1, y: 0 });
+  });
+
+  test('saved zoom / up-down win over automatic', async () => {
+    const { avatarFrame } = await import('@/lib/content');
+    expect(avatarFrame('/a.png', 1.5, -10)).toEqual({ fit: 'cutout', zoom: 1.5, y: -10 });
+    expect(avatarFrame('/a.png', null, 8)).toEqual({ fit: 'cutout', zoom: 1.22, y: 8 });
+  });
+});

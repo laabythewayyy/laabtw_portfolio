@@ -43,3 +43,22 @@ describe('site title', () => {
     expect(v.site_title).toBe('Tola Sann');
   });
 });
+
+describe('avatar zoom and position', () => {
+  test('saves zoom (0.5–2.5) and up/down (-50–50) as numbers, clamped', async () => {
+    const { parseSettingsForm } = await import('@/lib/admin/settings');
+    const v = parseSettingsForm(form({ avatar_zoom: '1.4', avatar_y: '-12' }));
+    expect(v.avatar_zoom).toBe(1.4);
+    expect(v.avatar_y).toBe(-12);
+    const big = parseSettingsForm(form({ avatar_zoom: '9', avatar_y: '300' }));
+    expect(big.avatar_zoom).toBe(2.5);
+    expect(big.avatar_y).toBe(50);
+  });
+
+  test('empty or invalid means automatic (null)', async () => {
+    const { parseSettingsForm } = await import('@/lib/admin/settings');
+    const v = parseSettingsForm(form({ avatar_zoom: '', avatar_y: 'abc' }));
+    expect(v.avatar_zoom).toBeNull();
+    expect(v.avatar_y).toBeNull();
+  });
+});

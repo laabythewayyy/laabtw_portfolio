@@ -16,6 +16,8 @@ create table if not exists public.site_settings (
   role_line       text not null default '',
   avatar_url      text,
   about_image_url text,          -- About section photo; null = use avatar_url
+  avatar_zoom     real,          -- homepage avatar zoom 0.5–2.5 (null = automatic)
+  avatar_y        real,          -- homepage avatar up/down -50–50 % (null = centred)
   open_to_work    boolean not null default true,
   cv_url          text,
   about_title     text not null default '',

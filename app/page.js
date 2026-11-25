@@ -29,7 +29,7 @@ export default async function Home() {
       <Portfolio>
         <div className="home">
           <Intro settings={settings} cvUrl={content.cvUrl} heroLinks={content.contacts.hero} />
-          <HeroArt avatarUrl={content.avatarUrl} openToWork={settings.open_to_work} />
+          <HeroArt avatarUrl={content.avatarUrl} zoom={settings.avatar_zoom} y={settings.avatar_y} openToWork={settings.open_to_work} />
         </div>
         <AboutPanel settings={settings} imageUrl={content.aboutImageUrl} cvUrl={content.cvUrl} skills={content.skills} />
         <ResumePanel settings={settings} resume={content.resume} resumeEmpty={content.resumeEmpty} />
