@@ -158,7 +158,9 @@ function Fields({ s, onDirty, onSaved }) {
         <div className="card">
           <h2>Homepage avatar</h2>
           <DropZone fileName="avatar__file" removeName="avatar_url__remove" current={s.avatar_url} kind="image" onChange={onDirty}
-            title="Drop a new image here, or click to choose" hint="JPG, PNG or WebP up to 5 MB. A transparent background looks best." />
+            removeLabel="Use the original cartoon avatar instead"
+            title={s.avatar_url ? 'Drop a new image here, or click to choose' : 'Using the original cartoon avatar. Drop an image here to replace it'}
+            hint="Fits the glowing circle: a cut-out PNG/WebP (transparent background) is zoomed like the cartoon avatar; a JPG photo is framed around the face. Up to 5 MB." />
           {err.avatar_url && <span className="field-error">{err.avatar_url}</span>}
         </div>
         <div className="card">
