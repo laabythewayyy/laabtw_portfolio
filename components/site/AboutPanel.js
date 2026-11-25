@@ -3,15 +3,15 @@ import BlockTitle from './BlockTitle';
 import RichText from './RichText';
 import CvButton from './CvButton';
 
-/** About: avatar card, title, text, info list, CV button, then the skill bars (they fill when the section opens). */
-export default function AboutPanel({ settings, avatarUrl, cvUrl, skills }) {
+/** About: photo card (its own upload, or the homepage avatar), title, text, info list, CV button, then the skill bars (they fill when the section opens). */
+export default function AboutPanel({ settings, imageUrl, cvUrl, skills }) {
   const head = settings.section_headers.about;
   return (
     <Panel id="about" head={head}>
       <div className="about">
         <div className="pic">
           {/* eslint-disable-next-line @next/next/no-img-element -- avatar may be an uploaded Supabase URL */}
-          <img src={avatarUrl} alt={`${settings.first_name} ${settings.last_name}'s avatar`} loading="lazy" decoding="async" />
+          <img src={imageUrl} alt={`${settings.first_name} ${settings.last_name}`.trim()} loading="lazy" decoding="async" />
         </div>
         <div>
           {settings.about_title && <h3>{settings.about_title}</h3>}

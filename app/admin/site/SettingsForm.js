@@ -13,7 +13,7 @@ const TABS = [
   ['home', 'Home'],
   ['about', 'About'],
   ['heads', 'Headings'],
-  ['files', 'Avatar & CV'],
+  ['files', 'Photos & CV'],
   ['footer', 'Footer'],
 ];
 const HEADERS = [['about', 'About'], ['resume', 'Resume'], ['projects', 'Projects'], ['contact', 'Contact']];
@@ -87,8 +87,8 @@ function Fields({ s, onDirty, onSaved }) {
   const err = state?.errors || {};
 
   useEffect(() => { if (state?.ok) onSaved(); }, [state, onSaved]);
-  // an upload problem lives on the Avatar & CV tab: show it
-  const fileError = err.avatar_url || err.cv_url;
+  // an upload problem lives on the Photos & CV tab: show it
+  const fileError = err.avatar_url || err.about_image_url || err.cv_url;
 
   return (
     <form action={action} onInput={onDirty}>
@@ -156,10 +156,18 @@ function Fields({ s, onDirty, onSaved }) {
 
       <div className={`tab tab-files${tab === 'files' ? ' on' : ''}`}>
         <div className="card">
-          <h2>Avatar</h2>
+          <h2>Homepage avatar</h2>
           <DropZone fileName="avatar__file" removeName="avatar_url__remove" current={s.avatar_url} kind="image" onChange={onDirty}
             title="Drop a new image here, or click to choose" hint="JPG, PNG or WebP up to 5 MB. A transparent background looks best." />
           {err.avatar_url && <span className="field-error">{err.avatar_url}</span>}
+        </div>
+        <div className="card">
+          <h2>About photo</h2>
+          <DropZone fileName="about_image__file" removeName="about_image_url__remove" current={s.about_image_url} kind="image" onChange={onDirty}
+            removeLabel="Use the homepage avatar instead"
+            title={s.about_image_url ? 'Drop a new image here, or click to choose' : 'Using your homepage avatar. Drop a photo here to use a different one'}
+            hint="Shown in the About section only. JPG, PNG or WebP up to 5 MB." />
+          {err.about_image_url && <span className="field-error">{err.about_image_url}</span>}
         </div>
         <div className="card">
           <h2>CV</h2>

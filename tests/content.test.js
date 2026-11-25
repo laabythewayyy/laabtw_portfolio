@@ -91,3 +91,17 @@ describe('buildFilters', () => {
     ]);
   });
 });
+
+describe('about photo', () => {
+  test('uses its own uploaded photo when there is one', () => {
+    const c = shapeContent({ ...empty, settings: { avatar_url: 'https://cdn/home.png', about_image_url: 'https://cdn/about.png' } });
+    expect(c.aboutImageUrl).toBe('https://cdn/about.png');
+    expect(c.avatarUrl).toBe('https://cdn/home.png');
+  });
+
+  test('falls back to the homepage avatar when none is uploaded', () => {
+    const c = shapeContent({ ...empty, settings: { avatar_url: 'https://cdn/home.png' } });
+    expect(c.aboutImageUrl).toBe('https://cdn/home.png');
+    expect(shapeContent(empty).aboutImageUrl).toBe('/avatartola.png');
+  });
+});

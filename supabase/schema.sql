@@ -15,6 +15,7 @@ create table if not exists public.site_settings (
   last_name       text not null default '',
   role_line       text not null default '',
   avatar_url      text,
+  about_image_url text,          -- About section photo; null = use avatar_url
   open_to_work    boolean not null default true,
   cv_url          text,
   about_title     text not null default '',

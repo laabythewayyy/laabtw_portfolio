@@ -10,6 +10,7 @@ import { SAVE_FAILED } from '@/lib/admin/messages';
 
 const FILES = [
   { field: 'avatar_url', input: 'avatar__file', kind: 'image', folder: 'avatar' },
+  { field: 'about_image_url', input: 'about_image__file', kind: 'image', folder: 'avatar' },
   { field: 'cv_url', input: 'cv__file', kind: 'pdf', folder: 'files' },
 ];
 
